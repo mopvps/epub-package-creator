@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EPUB Package Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="startupScreen" class="startup-screen">
+  <div class="startup-inner">
+    <span class="eyebrow">EPUB Package Pipeline</span>
+    <h1 class="startup-title">EPUB Package Builder</h1>
+    <p class="startup-sub">Select what you want to build</p>
+
+    <div class="mode-cards" role="radiogroup" aria-label="Build mode">
+      <button type="button" class="mode-card" data-mode="1" role="radio" aria-checked="false">
+        <span class="mode-icon">📑</span>
+        <span class="mode-title">TOC NCX</span>
+        <span class="mode-desc">Navigation control file from Contents.xhtml</span>
+      </button>
+      <button type="button" class="mode-card" data-mode="2" role="radio" aria-checked="false">
+        <span class="mode-icon">🧭</span>
+        <span class="mode-title">TOC + NAV</span>
+        <span class="mode-desc">NCX file and EPUB3 navigation document with page list</span>
+      </button>
+      <button type="button" class="mode-card" data-mode="3" role="radio" aria-checked="false">
+        <span class="mode-icon">📦</span>
+        <span class="mode-title">Full Package</span>
+        <span class="mode-desc">All three files including OPF manifest and spine</span>
+      </button>
+    </div>
+
+    <button id="startBuildingBtn" class="btn btn-primary btn-lg startup-start" disabled>
+      Start Building <span class="arrow">→</span>
+    </button>
+  </div>
+</div>
+
+<div class="app" id="appRoot" hidden>
+
+  <!-- ============ SIDEBAR / WIZARD RAIL ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">E</span>
+      <span class="brand-copy">
+        <span class="brand-text">EPUB&nbsp;Builder</span>
+        <span class="brand-tag">Package Pipeline</span>
+      </span>
+    </div>
+
+    <nav class="steps" role="tablist" aria-label="Build steps">
+      <button class="tab-btn step-item active" data-tab="meta" role="tab" aria-selected="true">
+        <span class="step-connector-wrap">
+          <span class="step-line top-line"></span>
+          <span class="step-badge"><span class="badge-num">1</span></span>
+          <span class="step-line bottom-line"></span>
+        </span>
+        <span class="step-copy">
+          <span class="step-title">Meta</span>
+          <span class="step-state">
+            <span class="ss ss-done">Done</span>
+            <span class="ss ss-now">In progress</span>
+            <span class="ss ss-lock">Locked</span>
+          </span>
+        </span>
+      </button>
+      <button class="tab-btn step-item" data-tab="frontmatter" role="tab" aria-selected="false">
+        <span class="step-connector-wrap">
+          <span class="step-line top-line"></span>
+          <span class="step-badge"><span class="badge-num">2</span></span>
+          <span class="step-line bottom-line"></span>
+        </span>
+        <span class="step-copy">
+          <span class="step-title">Front Matter</span>
+          <span class="step-state">
+            <span class="ss ss-done">Done</span>
+            <span class="ss ss-now">In progress</span>
+            <span class="ss ss-lock">Locked</span>
+          </span>
+        </span>
+      </button>
+      <button class="tab-btn step-item" data-tab="classes" role="tab" aria-selected="false">
+        <span class="step-connector-wrap">
+          <span class="step-line top-line"></span>
+          <span class="step-badge"><span class="badge-num">3</span></span>
+          <span class="step-line bottom-line"></span>
+        </span>
+        <span class="step-copy">
+          <span class="step-title">Classes</span>
+          <span class="step-state">
+            <span class="ss ss-done">Done</span>
+            <span class="ss ss-now">In progress</span>
+            <span class="ss ss-lock">Locked</span>
+          </span>
+        </span>
+      </button>
+      <button class="tab-btn step-item" data-tab="contents" role="tab" aria-selected="false">
+        <span class="step-connector-wrap">
+          <span class="step-line top-line"></span>
+          <span class="step-badge"><span class="badge-num">4</span></span>
+          <span class="step-line bottom-line"></span>
+        </span>
+        <span class="step-copy">
+          <span class="step-title">Table of Contents</span>
+          <span class="step-state">
+            <span class="ss ss-done">Done</span>
+            <span class="ss ss-now">In progress</span>
+            <span class="ss ss-lock">Locked</span>
+          </span>
+        </span>
+      </button>
+      <button class="tab-btn step-item" data-tab="generatencx" role="tab" aria-selected="false">
+        <span class="step-connector-wrap">
+          <span class="step-line top-line"></span>
+          <span class="step-badge"><span class="badge-num">5</span></span>
+          <span class="step-line bottom-line"></span>
+        </span>
+        <span class="step-copy">
+          <span class="step-title">Generate NCX</span>
+          <span class="step-state">
+            <span class="ss ss-done">Done</span>
+            <span class="ss ss-now">In progress</span>
+            <span class="ss ss-lock">Locked</span>
+          </span>
+        </span>
+      </button>
+      <button class="tab-btn step-item" data-tab="nav" role="tab" aria-selected="false">
+        <span class="step-connector-wrap">
+          <span class="step-line top-line"></span>
+          <span class="step-badge"><span class="badge-num">6</span></span>
+          <span class="step-line bottom-line"></span>
+        </span>
+        <span class="step-copy">
+          <span class="step-title">Page List</span>
+          <span class="step-state">
+            <span class="ss ss-done">Done</span>
+            <span class="ss ss-now">In progress</span>
+            <span class="ss ss-lock">Locked</span>
+          </span>
+        </span>
+      </button>
+      <button class="tab-btn step-item" data-tab="package" role="tab" aria-selected="false">
+        <span class="step-connector-wrap">
+          <span class="step-line top-line"></span>
+          <span class="step-badge"><span class="badge-num">7</span></span>
+          <span class="step-line bottom-line"></span>
+        </span>
+        <span class="step-copy">
+          <span class="step-title">Packaging</span>
+          <span class="step-state">
+            <span class="ss ss-done">Done</span>
+            <span class="ss ss-now">In progress</span>
+            <span class="ss ss-lock">Locked</span>
+          </span>
+        </span>
+      </button>
+      <button class="tab-btn step-item" data-tab="generate" role="tab" aria-selected="false">
+        <span class="step-connector-wrap">
+          <span class="step-line top-line"></span>
+          <span class="step-badge"><span class="badge-num">8</span></span>
+          <span class="step-line bottom-line"></span>
+        </span>
+        <span class="step-copy">
+          <span class="step-title">Generate Files</span>
+          <span class="step-state">
+            <span class="ss ss-done">Done</span>
+            <span class="ss ss-now">In progress</span>
+            <span class="ss ss-lock">Locked</span>
+          </span>
+        </span>
+      </button>
+    </nav>
+
+    <details class="side-summary" id="buildStatus" open>
+      <summary class="bs-head">
+        <span class="bs-label">Build Status</span>
+        <span class="bs-chev" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </span>
+      </summary>
+
+      <div class="bs-body">
+        <div class="bs-top">
+          <div class="ring-wrap" id="ringWrap">
+            <svg class="ring" viewBox="0 0 80 80" aria-hidden="true">
+              <circle class="ring-bg" cx="40" cy="40" r="34"></circle>
+              <circle class="ring-fg" id="ringFg" cx="40" cy="40" r="34"></circle>
+            </svg>
+            <div class="ring-center">
+              <span class="ring-num" id="ringNum">1/8</span>
+              <span class="ring-label">steps</span>
+            </div>
+            <div class="confetti" id="confetti" aria-hidden="true"></div>
+          </div>
+
+          <ul class="quick-stats">
+            <li class="qs-row" id="qsToc"><span class="qs-ic">○</span><span class="qs-t">0 TOC entries</span></li>
+            <li class="qs-row" id="qsPages"><span class="qs-ic">○</span><span class="qs-t">0 pages</span></li>
+            <li class="qs-row" id="qsImages"><span class="qs-ic">○</span><span class="qs-t">0 images</span></li>
+            <li class="qs-row" id="qsContribs"><span class="qs-ic">○</span><span class="qs-t">0 contributors</span></li>
+          </ul>
+        </div>
+
+        <div class="bs-meta">
+          <div class="mini-row"><span class="mini-k">Title</span><span class="mini-v" id="sumTitle">—</span></div>
+          <div class="mini-row"><span class="mini-k">ISBN</span><span class="mini-v mono" id="sumIsbn">—</span></div>
+        </div>
+      </div>
+    </details>
+
+    <div class="sidebar-foot">
+      <button id="themeToggle" class="theme-toggle" title="Toggle theme" aria-label="Toggle color theme">
+        <svg class="tt-icon tt-sun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+        </svg>
+        <svg class="tt-icon tt-moon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <span class="tt-label">Dark Mode</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ============ CANVAS ============ -->
+  <main class="canvas">
+    <header class="canvas-head">
+      <span class="eyebrow">EPUB Package Pipeline</span>
+      <h1 id="stepTitle" class="step-title">Meta Information</h1>
+      <p id="stepDesc" class="step-desc">Core identifiers written into the NCX header.</p>
+      <div class="progress">
+        <div class="progress-meta">
+          <span id="progressCount" class="progress-count">Step 1 of 8</span>
+          <span class="progress-pct" aria-hidden="true"></span>
+        </div>
+        <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+      </div>
+    </header>
+
+    <div class="canvas-body">
+
+      <!-- 1 · META -->
+      <div id="tab-meta" class="tab-panel active" role="tabpanel"
+           data-title="Meta Information" data-desc="Core identifiers written into the NCX header.">
+        <section class="card" style="--i:0">
+          <a href="#" id="changeSelectionLink" class="change-selection-link">← Change Selection</a>
+          <div class="grid">
+            <div class="field">
+              <label for="isbn">ISBN</label>
+              <div class="input-wrap">
+                <input type="text" id="isbn" placeholder="e.g. 9781234567890" autocomplete="off">
+                <span class="tick" hidden>✓</span>
+              </div>
+              <span class="hint" id="isbnHint">Stored as urn:isbn: {value}</span>
+            </div>
+            <div class="field">
+              <label for="totalPageCount">Total Page Count</label>
+              <div class="input-wrap">
+                <input type="text" id="totalPageCount" placeholder="e.g. 250" autocomplete="off">
+                <span class="tick" hidden>✓</span>
+              </div>
+              <span class="hint">Reported as dc:format “N pages”.</span>
+            </div>
+            <div class="field">
+              <label for="maxPageNumber">Max Page Number</label>
+              <div class="input-wrap">
+                <input type="text" id="maxPageNumber" placeholder="e.g. 250" autocomplete="off">
+                <span class="tick" hidden>✓</span>
+              </div>
+              <span class="hint">Highest printed page number.</span>
+            </div>
+            <div class="field">
+              <label>dtb:depth</label>
+              <div class="input-wrap">
+                <input type="text" value="2" disabled>
+              </div>
+              <span class="hint">Fixed navigation depth.</span>
+            </div>
+          </div>
+          <div class="step-nav">
+            <button class="btn btn-primary next-btn" data-next="frontmatter">Continue <span class="arrow">→</span></button>
+          </div>
+        </section>
+      </div>
+
+      <!-- 2 · FRONT MATTER -->
+      <div id="tab-frontmatter" class="tab-panel" role="tabpanel"
+           data-title="Front Matter Entries" data-desc="Reorder, edit, add, or remove entries. Paths auto-prefixed with xhtml/.">
+        <section class="card" style="--i:0">
+          <p class="sub">Reorder, edit, add, or remove entries. Paths auto-prefixed with <code>xhtml/</code>.</p>
+          <ul id="frontMatterList" class="entry-list"></ul>
+          <div class="add-entry">
+            <input type="text" id="newLabel" placeholder="Label (e.g. Preface to the First Edition)" autocomplete="off">
+            <button id="addEntryBtn" class="btn btn-secondary">+ Add Entry</button>
+          </div>
+          <div class="step-nav">
+            <button class="btn btn-primary next-btn" data-next="classes">Continue <span class="arrow">→</span></button>
+          </div>
+        </section>
+      </div>
+
+      <!-- 3 · CLASSES -->
+      <div id="tab-classes" class="tab-panel" role="tabpanel"
+           data-title="Classes to Extract" data-desc="Only p / h* tags carrying these classes are parsed. toc1 always included.">
+        <section class="card" style="--i:0">
+          <p class="sub">Only <code>&lt;p&gt;</code>/<code>&lt;h*&gt;</code> tags with these classes are parsed. <code>toc1</code> always included.</p>
+          <ul id="classList" class="class-list"></ul>
+          <div class="add-entry">
+            <input type="text" id="newClass" placeholder="Class name (e.g. toc2, h2)" autocomplete="off">
+            <button id="addClassBtn" class="btn btn-secondary">+ Add Class</button>
+          </div>
+          <div class="step-nav">
+            <button class="btn btn-primary next-btn" data-next="contents">Continue <span class="arrow">→</span></button>
+          </div>
+        </section>
+      </div>
+
+      <!-- 4 · CONTENTS -->
+      <div id="tab-contents" class="tab-panel" role="tabpanel"
+           data-title="Upload Contents.xhtml" data-desc="Parses anchors inside matching tags. Nested HTML tags stripped from text.">
+        <section class="card" style="--i:0">
+          <p class="sub">Parses <code>&lt;a href="….xhtml"&gt;text&lt;/a&gt;</code> inside matching tags. Nested HTML tags stripped from text.</p>
+          <label for="fileInput" class="dropzone">
+            <span class="dropzone-icon">⬆</span>
+            <span class="dropzone-copy">
+              <span class="dropzone-title">Choose Contents file</span>
+              <span class="dropzone-sub">.xhtml · .html · .htm · .xml</span>
+            </span>
+            <input type="file" id="fileInput" accept=".xhtml,.html,.htm,.xml">
+            <span id="fileName" class="file-name">No file selected</span>
+          </label>
+          <div id="docTitlePreview" class="doc-title-preview" hidden>
+            <span class="dtp-label">Detected Title</span>
+            <span id="docTitleText" class="dtp-value"></span>
+          </div>
+          <ul id="extractedList" class="entry-list read-only"></ul>
+          <div class="step-nav">
+            <button class="btn btn-primary next-btn" data-next="generatencx">Continue <span class="arrow">→</span></button>
+          </div>
+        </section>
+      </div>
+
+      <!-- 5 · GENERATE NCX -->
+      <div id="tab-generatencx" class="tab-panel" role="tabpanel"
+           data-title="Generate NCX" data-desc="Builds toc.ncx from Meta, Front Matter, Classes, and Contents. Held in memory only.">
+        <section class="card" style="--i:0">
+          <p class="sub">Builds <code>toc.ncx</code> from Meta, Front Matter, Classes, and Contents data. Stored in memory — no download here.</p>
+          <div class="action-row">
+            <button id="generateNcxBtn" class="btn btn-primary">Generate NCX</button>
+            <div id="ncxStatusMsg" class="status-msg"></div>
+          </div>
+          <pre id="ncxPreview" class="ncx-preview"></pre>
+          <div class="step-nav">
+            <button class="btn btn-primary next-btn" data-next="nav" id="ncxNextBtn" disabled>Continue <span class="arrow">→</span></button>
+          </div>
+        </section>
+      </div>
+
+      <!-- 6 · PAGE LIST -->
+      <div id="tab-nav" class="tab-panel" role="tabpanel"
+           data-title="Page List" data-desc="Upload the page list Excel to build the nav page-list.">
+        <section class="card" style="--i:0">
+          <h3 class="card-title">Upload Page List Excel</h3>
+          <p class="sub">Columns: # | File Name | Start Page | End Page. Row 1 = ISBN, row 2 = header, data from row 3.</p>
+          <label for="xlsxFileInput" class="dropzone">
+            <span class="dropzone-icon">▦</span>
+            <span class="dropzone-copy">
+              <span class="dropzone-title">Choose Excel file</span>
+              <span class="dropzone-sub">.xlsx · .xls</span>
+            </span>
+            <input type="file" id="xlsxFileInput" accept=".xlsx,.xls">
+            <span id="xlsxFileName" class="file-name">No file selected</span>
+          </label>
+        </section>
+
+        <section class="card" style="--i:1">
+          <h3 class="card-title">Preview</h3>
+          <div class="stat-grid">
+            <div class="stat-card">
+              <input type="text" id="tocCountPreview" value="0" readonly class="stat-value" tabindex="-1" aria-label="TOC entries">
+              <span class="stat-label">TOC Entries</span>
+            </div>
+            <div class="stat-card">
+              <input type="text" id="pageCountPreview" value="0" readonly class="stat-value" tabindex="-1" aria-label="Page list entries">
+              <span class="stat-label">Page List Entries</span>
+            </div>
+          </div>
+          <div class="step-nav">
+            <button class="btn btn-primary next-btn" data-next="package">Continue <span class="arrow">→</span></button>
+          </div>
+        </section>
+      </div>
+
+      <!-- 7 · PACKAGE -->
+      <div id="tab-package" class="tab-panel" role="tabpanel"
+           data-title="Package" data-desc="Contributors, publisher metadata, and image assets for package.opf.">
+        <section class="card" style="--i:0">
+          <h3 class="card-title">Contributors</h3>
+          <p class="sub">Add contributors in display order. Role maps to a <code>marc:relators</code> code.</p>
+          <ul id="contributorList" class="entry-list"></ul>
+          <div class="add-entry">
+            <button id="addContributorBtn" class="btn btn-secondary">+ Add Contributor</button>
+          </div>
+        </section>
+
+        <section class="card" style="--i:1">
+          <h3 class="card-title">Publisher &amp; Date</h3>
+          <div class="grid">
+            <div class="field">
+              <label for="publisherInput">Publisher</label>
+              <div class="input-wrap">
+                <input type="text" id="publisherInput" placeholder="e.g. Virgo Publishing" autocomplete="off">
+                <span class="tick" hidden>✓</span>
+              </div>
+            </div>
+            <div class="field">
+              <label for="dateInput">Date</label>
+              <div class="input-wrap">
+                <input type="text" id="dateInput" placeholder="YYYY-MM-DDThh:mm:ss" autocomplete="off">
+              </div>
+              <span class="hint">Prefilled with current timestamp.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" style="--i:2">
+          <h3 class="card-title">Images Folder</h3>
+          <p class="sub">Select the EPUB images folder. Cover image must be named <code>{ISBN}.jpg</code>.</p>
+          <label for="imagesFolderInput" class="dropzone">
+            <span class="dropzone-icon">🖼</span>
+            <span class="dropzone-copy">
+              <span class="dropzone-title">Select EPUB images folder</span>
+              <span class="dropzone-sub">Reads every image in the directory</span>
+            </span>
+            <input type="file" id="imagesFolderInput" webkitdirectory multiple accept="image/*">
+            <span id="imagesFolderName" class="file-name">No folder selected</span>
+          </label>
+          <div id="imagesCountPreview" class="summary-badge" hidden></div>
+          <div class="step-nav">
+            <button class="btn btn-primary next-btn" data-next="generate">Continue <span class="arrow">→</span></button>
+          </div>
+        </section>
+      </div>
+
+      <!-- 8 · GENERATE -->
+      <div id="tab-generate" class="tab-panel" role="tabpanel"
+           data-title="Review &amp; Generate" data-desc="Confirm the details, then export toc.ncx, nav.xhtml, and package.opf.">
+        <section class="card" style="--i:0">
+          <h3 class="card-title">Review</h3>
+          <p class="sub">Confirm before generating. Bundled together as <code>output.zip</code>.</p>
+          <dl id="reviewSummary" class="review-grid"></dl>
+          <div class="action-row">
+            <button id="generateAllBtn" class="btn btn-primary btn-lg">
+              <span class="btn-label">Generate All Files</span>
+              <span class="spinner" aria-hidden="true"></span>
+            </button>
+            <div id="statusMsg" class="status-msg"></div>
+          </div>
+        </section>
+
+        <section id="successPanel" class="card success-card" hidden>
+          <div class="success-burst" id="successConfetti" aria-hidden="true"></div>
+
+          <div class="success-head">
+            <span class="success-check" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            <span class="eyebrow success-eyebrow">Build complete</span>
+            <h3 class="success-title">Your package is ready</h3>
+            <p class="success-sub">Bundled and downloaded as <code>output.zip</code>. Select any file to inspect its source.</p>
+          </div>
+
+          <ul class="file-list">
+            <li class="file-row" data-file="toc.ncx" role="button" tabindex="0" aria-label="View toc.ncx code">
+              <span class="file-icon" aria-hidden="true">NCX</span>
+              <span class="file-copy">
+                <span class="file-name-out">toc.ncx</span>
+                <span class="file-desc">Navigation control file</span>
+              </span>
+              <span class="pill pill-success">Generated</span>
+              <span class="view-btn">&lt;/&gt; View</span>
+            </li>
+            <li class="file-row" data-file="nav.xhtml" role="button" tabindex="0" aria-label="View nav.xhtml code">
+              <span class="file-icon" aria-hidden="true">NAV</span>
+              <span class="file-copy">
+                <span class="file-name-out">nav.xhtml</span>
+                <span class="file-desc">EPUB3 navigation &amp; page list</span>
+              </span>
+              <span class="pill pill-success">Generated</span>
+              <span class="view-btn">&lt;/&gt; View</span>
+            </li>
+            <li class="file-row" data-file="package.opf" role="button" tabindex="0" aria-label="View package.opf code">
+              <span class="file-icon" aria-hidden="true">OPF</span>
+              <span class="file-copy">
+                <span class="file-name-out">package.opf</span>
+                <span class="file-desc">Manifest, metadata &amp; spine</span>
+              </span>
+              <span class="pill pill-success">Generated</span>
+              <span class="view-btn">&lt;/&gt; View</span>
+            </li>
+          </ul>
+
+          <div class="success-actions">
+            <button id="downloadAllBtn" type="button" class="btn btn-primary btn-lg">
+              Download all <span class="arrow arrow-down">↓</span>
+            </button>
+            <button id="startOverBtn" type="button" class="btn btn-ghost">Start a new build</button>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<!-- ============ CODE PREVIEW MODAL ============ -->
+<div id="codeModal" class="code-modal" hidden role="dialog" aria-modal="true" aria-labelledby="codeModalTitle">
+  <div class="code-modal-card" role="document">
+    <header class="code-modal-head">
+      <span id="codeModalTitle" class="code-modal-title">file</span>
+      <div class="code-modal-actions">
+        <button id="codeModalCopy" class="btn btn-secondary btn-sm">Copy</button>
+        <button id="codeModalDownload" class="btn btn-secondary btn-sm">Download</button>
+        <button id="codeModalClose" class="modal-close" aria-label="Close">✕</button>
+      </div>
+    </header>
+    <div class="code-modal-body">
+      <pre id="codeModalCode" class="code-modal-code"></pre>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
