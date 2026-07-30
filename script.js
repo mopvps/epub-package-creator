@@ -10,6 +10,7 @@
     { label: "Contents", filename: "Contents.xhtml" }
   ];
 
+  let fmExcelFile = null;
   let extractedEntries = [];
   let docTitle = "";
   let extractClasses = ["toc1"];
@@ -266,8 +267,7 @@ ${spineItems}</spine>
     tocCountPreview.value = String(navTocEntries.length);
   }
 
-  xlsxFileInput.addEventListener("change", () => {
-    const file = xlsxFileInput.files[0];
+  function loadPageListExcel(file) {
     if (!file) return;
     xlsxFileName.textContent = file.name;
     const reader = new FileReader();
@@ -285,6 +285,47 @@ ${spineItems}</spine>
     };
     reader.onerror = () => showStatus("Failed to read Excel file.", "error");
     reader.readAsArrayBuffer(file);
+  }
+
+  xlsxFileInput.addEventListener("change", () => {
+    const file = xlsxFileInput.files[0];
+    loadPageListExcel(file);
+  });
+
+  const useFmExcelBtn = document.getElementById("useFmExcelBtn");
+  const useFmChangeLink = document.getElementById("useFmChangeLink");
+  const xlsxDropzone = document.getElementById("xlsxDropzone");
+  const fmDisabledLabel = document.getElementById("fmDisabledLabel");
+  const fmFilenameTag = document.getElementById("fmFilenameTag");
+
+  useFmExcelBtn.addEventListener("click", () => {
+    if (!fmExcelFile) return;
+    loadPageListExcel(fmExcelFile);
+
+    useFmExcelBtn.textContent = "✓ Using front matter Excel";
+    useFmExcelBtn.classList.add("active");
+    useFmChangeLink.hidden = false;
+
+    xlsxDropzone.classList.add("fm-disabled");
+    fmDisabledLabel.hidden = false;
+    xlsxFileInput.disabled = true;
+
+    fmFilenameTag.hidden = false;
+    fmFilenameTag.textContent = `📄 ${fmExcelFile.name}`;
+  });
+
+  useFmChangeLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    useFmExcelBtn.textContent = "Use front matter Excel";
+    useFmExcelBtn.classList.remove("active");
+    useFmChangeLink.hidden = true;
+
+    xlsxDropzone.classList.remove("fm-disabled");
+    fmDisabledLabel.hidden = true;
+    xlsxFileInput.disabled = false;
+
+    fmFilenameTag.hidden = true;
+    fmFilenameTag.textContent = "";
   });
 
   function parsePageListRows(rows) {
@@ -384,7 +425,41 @@ ${pageItems}</ol>
     frontMatterList.innerHTML = "";
     frontMatter.forEach((entry, idx) => {
       const li = document.createElement("li");
-      li.className = "entry-item";
+      li.className = "entry-item fm-row";
+      li.draggable = true;
+      li.dataset.idx = String(idx);
+
+      li.addEventListener("dragstart", () => {
+        li.classList.add("dragging");
+      });
+      li.addEventListener("dragend", () => {
+        li.classList.remove("dragging");
+        frontMatterList.querySelectorAll(".fm-row.drag-over").forEach((row) => row.classList.remove("drag-over"));
+      });
+      li.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        li.classList.add("drag-over");
+      });
+      li.addEventListener("dragleave", () => {
+        li.classList.remove("drag-over");
+      });
+      li.addEventListener("drop", (e) => {
+        e.preventDefault();
+        li.classList.remove("drag-over");
+        const draggingRow = frontMatterList.querySelector(".fm-row.dragging");
+        if (!draggingRow) return;
+        const fromIdx = Number(draggingRow.dataset.idx);
+        const toIdx = Number(li.dataset.idx);
+        if (fromIdx === toIdx) return;
+        const [moved] = frontMatter.splice(fromIdx, 1);
+        frontMatter.splice(toIdx, 0, moved);
+        renderFrontMatter();
+      });
+
+      const number = document.createElement("span");
+      number.className = "fm-number";
+      number.textContent = `${idx + 1}`;
+      li.appendChild(number);
 
       const handle = document.createElement("span");
       handle.className = "handle";
@@ -418,30 +493,6 @@ ${pageItems}</ol>
       fields.appendChild(pathPreview);
       li.appendChild(fields);
 
-      const upBtn = document.createElement("button");
-      upBtn.className = "icon-btn";
-      upBtn.title = "Move up";
-      upBtn.textContent = "↑";
-      upBtn.disabled = idx === 0;
-      upBtn.addEventListener("click", () => {
-        if (idx > 0) {
-          [frontMatter[idx - 1], frontMatter[idx]] = [frontMatter[idx], frontMatter[idx - 1]];
-          renderFrontMatter();
-        }
-      });
-
-      const downBtn = document.createElement("button");
-      downBtn.className = "icon-btn";
-      downBtn.title = "Move down";
-      downBtn.textContent = "↓";
-      downBtn.disabled = idx === frontMatter.length - 1;
-      downBtn.addEventListener("click", () => {
-        if (idx < frontMatter.length - 1) {
-          [frontMatter[idx + 1], frontMatter[idx]] = [frontMatter[idx], frontMatter[idx + 1]];
-          renderFrontMatter();
-        }
-      });
-
       const delBtn = document.createElement("button");
       delBtn.className = "icon-btn danger";
       delBtn.title = "Delete";
@@ -451,8 +502,6 @@ ${pageItems}</ol>
         renderFrontMatter();
       });
 
-      li.appendChild(upBtn);
-      li.appendChild(downBtn);
       li.appendChild(delBtn);
 
       frontMatterList.appendChild(li);
@@ -473,6 +522,71 @@ ${pageItems}</ol>
     newLabelInput.value = "";
     renderFrontMatter();
   }
+
+  const fmImportBtn = document.getElementById("fmImportBtn");
+  const fmExcelInput = document.getElementById("fmExcelInput");
+
+  fmImportBtn.addEventListener("click", () => {
+    fmExcelInput.click();
+  });
+
+  fmExcelInput.addEventListener("change", () => {
+    const file = fmExcelInput.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = new Uint8Array(reader.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheet = workbook.Sheets["PageData"];
+        if (!sheet) {
+          showStatus('Sheet "PageData" not found in workbook.', "error");
+          return;
+        }
+        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+        const dataRows = rows.slice(2);
+        const names = [];
+        dataRows.forEach((row) => {
+          if (!row || row[1] === undefined || row[1] === "") return;
+          const name = String(row[1]).trim();
+          if (!name) return;
+          names.push(name);
+        });
+
+        function getPrefix(name) {
+          const parts = name.split("_");
+          if (parts.length < 3) return null;
+          return parts.slice(0, -1).join("_") + "_";
+        }
+
+        const prefixCount = {};
+        names.forEach((name) => {
+          const prefix = getPrefix(name);
+          if (prefix === null) return;
+          prefixCount[prefix] = (prefixCount[prefix] || 0) + 1;
+        });
+
+        const filteredNames = names.filter((name) => {
+          const prefix = getPrefix(name);
+          if (prefix === null) return true;
+          return prefixCount[prefix] < 5;
+        });
+
+        const newEntries = filteredNames.map((name) => ({ label: name, filename: name + ".xhtml" }));
+        frontMatter.length = 0;
+        newEntries.forEach((entry) => frontMatter.push(entry));
+        renderFrontMatter();
+        fmExcelFile = file;
+        useFmExcelBtn.style.display = "";
+        showStatus(`Imported ${newEntries.length} front matter entries from ${file.name}.`, "success");
+      } catch (err) {
+        showStatus("Failed to parse Excel file: " + err.message, "error");
+      }
+    };
+    reader.onerror = () => showStatus("Failed to read Excel file.", "error");
+    reader.readAsArrayBuffer(file);
+    fmExcelInput.value = "";
+  });
 
   addEntryBtn.addEventListener("click", addFrontMatterEntry);
   newLabelInput.addEventListener("keydown", (e) => {

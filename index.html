@@ -7,7 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23e8600d'/><text x='50%25' y='54%25' font-size='22' text-anchor='middle' dominant-baseline='middle' fill='white' font-family='sans-serif'>≡</text></svg>">
 </head>
 <body>
 <div id="startupScreen" class="startup-screen">
@@ -291,7 +293,11 @@
       <div id="tab-frontmatter" class="tab-panel" role="tabpanel"
            data-title="Front Matter Entries" data-desc="Reorder, edit, add, or remove entries. Paths auto-prefixed with xhtml/.">
         <section class="card" style="--i:0">
-          <p class="sub">Reorder, edit, add, or remove entries. Paths auto-prefixed with <code>xhtml/</code>.</p>
+          <div class="fm-toolbar">
+            <p class="sub">Reorder, edit, add, or remove entries. Paths auto-prefixed with <code>xhtml/</code>.</p>
+            <button id="fmImportBtn" type="button" class="btn btn-secondary">📊 Import from Excel</button>
+            <input type="file" id="fmExcelInput" accept=".xlsx" style="display:none">
+          </div>
           <ul id="frontMatterList" class="entry-list"></ul>
           <div class="add-entry">
             <input type="text" id="newLabel" placeholder="Label (e.g. Preface to the First Edition)" autocomplete="off">
@@ -366,7 +372,7 @@
         <section class="card" style="--i:0">
           <h3 class="card-title">Upload Page List Excel</h3>
           <p class="sub">Columns: # | File Name | Start Page | End Page. Row 1 = ISBN, row 2 = header, data from row 3.</p>
-          <label for="xlsxFileInput" class="dropzone">
+          <label for="xlsxFileInput" id="xlsxDropzone" class="dropzone">
             <span class="dropzone-icon">▦</span>
             <span class="dropzone-copy">
               <span class="dropzone-title">Choose Excel file</span>
@@ -374,7 +380,13 @@
             </span>
             <input type="file" id="xlsxFileInput" accept=".xlsx,.xls">
             <span id="xlsxFileName" class="file-name">No file selected</span>
+            <span id="fmDisabledLabel" class="fm-disabled-label" hidden>Using front matter Excel</span>
           </label>
+          <div class="use-fm-row">
+            <button id="useFmExcelBtn" type="button" class="btn btn-secondary use-fm-btn" style="display:none">Use front matter Excel</button>
+            <a href="#" id="useFmChangeLink" class="use-fm-change" hidden>Change</a>
+          </div>
+          <div id="fmFilenameTag" class="fm-filename-tag" hidden></div>
         </section>
 
         <section class="card" style="--i:1">

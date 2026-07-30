@@ -704,6 +704,76 @@ select:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-r
   to { opacity: 1; transform: translateY(0); }
 }
 .entry-item .handle { color: var(--text-muted); font-size: 0.9rem; width: 18px; cursor: grab; }
+.app-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background: #e8600d;
+  border-radius: 12px;
+  margin-right: 12px;
+}
+.app-icon i {
+  font-size: 24px;
+  color: #fff;
+}
+.fm-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+#fmImportBtn {
+  background: transparent;
+  border: 1px solid #e8600d;
+  color: #e8600d;
+  white-space: nowrap;
+}
+#fmImportBtn:hover { background: rgba(232, 96, 13, 0.1); }
+#useFmExcelBtn {
+  background: transparent;
+  border: 1px solid #e8600d;
+  color: #e8600d;
+  margin-top: 10px;
+}
+#useFmExcelBtn:hover { background: rgba(232, 96, 13, 0.1); }
+.fm-disabled { opacity: 0.4; pointer-events: none; }
+.use-fm-btn.active { background: #e8600d; color: #fff; border-color: #e8600d; }
+.use-fm-btn.active:hover { background: #e8600d; }
+.fm-filename-tag { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+.use-fm-row { display: flex; align-items: center; gap: 10px; }
+.use-fm-change { font-size: 12px; color: var(--text-muted); cursor: pointer; }
+.use-fm-change:hover { color: #e8600d; }
+.dropzone { position: relative; }
+.fm-disabled-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.05);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  pointer-events: none;
+}
+.fm-row { cursor: default; }
+.fm-row[draggable="true"] { cursor: grab; }
+.fm-row.dragging { opacity: 0.4; }
+.fm-row.drag-over { border-top: 2px solid #e8600d; }
+.fm-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: #e8600d;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #fff;
+  flex-shrink: 0;
+}
+[data-theme="dark"] .fm-number {
+  background: #e8600d;
+  opacity: 0.9;
+}
 .entry-item .entry-fields { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; min-width: 0; }
 .entry-item input[type="text"] { min-height: 40px; font-size: 0.86rem; }
 .entry-item select { min-height: 40px; }
