@@ -3,26 +3,21 @@
 
   const XHTML_PREFIX = "xhtml/";
 
-  let frontMatter = [
-    { label: "Cover", filename: "Cover.xhtml" },
-    { label: "Title", filename: "Title.xhtml" },
-    { label: "Copyright", filename: "Copyright.xhtml" },
-    { label: "Contents", filename: "Contents.xhtml" }
-  ];
-
-  let fmExcelFile = null;
   let extractedEntries = [];
+  let h2Entries = [];
   let docTitle = "";
   let extractClasses = ["toc1"];
+  let detectedClasses = ["toc1"];
+  let rawContentsText = "";
 
-  const frontMatterList = document.getElementById("frontMatterList");
-  const classList = document.getElementById("classList");
+  const classBadgesWrap = document.getElementById("classBadgesWrap");
+  const classCount = document.getElementById("classCount");
   const newClassInput = document.getElementById("newClass");
   const addClassBtn = document.getElementById("addClassBtn");
-  const newLabelInput = document.getElementById("newLabel");
-  const addEntryBtn = document.getElementById("addEntryBtn");
   const fileInput = document.getElementById("fileInput");
   const fileNameSpan = document.getElementById("fileName");
+  const contentsViewBtn = document.getElementById("contentsViewBtn");
+  const viewContentsBtn = document.getElementById("viewContentsBtn");
   const extractedList = document.getElementById("extractedList");
   const docTitlePreview = document.getElementById("docTitlePreview");
   const docTitleText = document.getElementById("docTitleText");
@@ -35,8 +30,11 @@
 
   const xlsxFileInput = document.getElementById("xlsxFileInput");
   const xlsxFileName = document.getElementById("xlsxFileName");
-  const tocCountPreview = document.getElementById("tocCountPreview");
-  const pageCountPreview = document.getElementById("pageCountPreview");
+  const excelConfirm = document.getElementById("excelConfirm");
+  const excelViewBtn = document.getElementById("excelViewBtn");
+  const tocCountPreview = document.getElementById("previewToc");
+  const pageCountPreview = document.getElementById("previewPages");
+  const sectionsCountPreview = document.getElementById("previewSections");
   const generateAllBtn = document.getElementById("generateAllBtn");
   const generateNcxBtn = document.getElementById("generateNcxBtn");
   const ncxStatusMsg = document.getElementById("ncxStatusMsg");
@@ -48,6 +46,7 @@
   let lastPackageOpf = null;
   let navTocEntries = [];
   let navPageEntries = [];
+  let excelRows = [];
   let navDocTitle = "";
 
   let contributors = [{ name: "", role: "Author" }];
@@ -154,7 +153,7 @@
     const publisher = publisherInput.value.trim();
     const date = dateInput.value.trim();
     const title = docTitle || "Untitled";
-    const allEntries = [...frontMatter, ...extractedEntries];
+    const allEntries = getExcelEntries();
 
     let contributorBlocks = "";
     contributors.forEach((c, idx) => {
@@ -264,10 +263,26 @@ ${spineItems}</spine>
       }
     }
     navTocEntries = entries;
-    tocCountPreview.value = String(navTocEntries.length);
+    tocCountPreview.textContent = String(navTocEntries.length);
   }
 
-  function loadPageListExcel(file) {
+  function getExcelEntries() {
+    return [...excelRows]
+      .sort((a, b) => a.number - b.number)
+      .map((row) => ({ label: row.label, filename: row.filename }));
+  }
+
+  function getNcxEntries() {
+    return [...excelRows]
+      .sort((a, b) => a.number - b.number)
+      .filter((row) => row.flag !== 1)
+      .map((row) => {
+        const matched = extractedEntries.find((e) => e.filename === row.filename);
+        return { label: matched ? matched.label : row.label, filename: row.filename };
+      });
+  }
+
+  function loadMasterExcel(file) {
     if (!file) return;
     xlsxFileName.textContent = file.name;
     const reader = new FileReader();
@@ -277,8 +292,13 @@ ${spineItems}</spine>
         const workbook = XLSX.read(data, { type: "array" });
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-        parsePageListRows(rows);
-        showStatus(`Extracted ${navPageEntries.length} page entries from ${file.name}.`, "success");
+        parseMasterExcelRows(rows);
+        excelConfirm.hidden = false;
+        document.getElementById("confirmIsbn").textContent = isbnInput.value.trim() || "—";
+        document.getElementById("confirmEntries").textContent = String(excelRows.length);
+        document.getElementById("confirmPages").textContent = totalPageCountInput.value.trim() || "—";
+        if (excelViewBtn) excelViewBtn.hidden = false;
+        showStatus(`Loaded ${excelRows.length} entries from ${file.name}.`, "success");
       } catch (err) {
         showStatus("Failed to parse Excel file: " + err.message, "error");
       }
@@ -289,56 +309,28 @@ ${spineItems}</spine>
 
   xlsxFileInput.addEventListener("change", () => {
     const file = xlsxFileInput.files[0];
-    loadPageListExcel(file);
+    loadMasterExcel(file);
   });
 
-  const useFmExcelBtn = document.getElementById("useFmExcelBtn");
-  const useFmChangeLink = document.getElementById("useFmChangeLink");
-  const xlsxDropzone = document.getElementById("xlsxDropzone");
-  const fmDisabledLabel = document.getElementById("fmDisabledLabel");
-  const fmFilenameTag = document.getElementById("fmFilenameTag");
+  function parseMasterExcelRows(rows) {
+    const isbn = rows[0] && rows[0][1] !== undefined ? String(rows[0][1]).trim() : "";
+    isbnInput.value = isbn;
 
-  useFmExcelBtn.addEventListener("click", () => {
-    if (!fmExcelFile) return;
-    loadPageListExcel(fmExcelFile);
-
-    useFmExcelBtn.textContent = "✓ Using front matter Excel";
-    useFmExcelBtn.classList.add("active");
-    useFmChangeLink.hidden = false;
-
-    xlsxDropzone.classList.add("fm-disabled");
-    fmDisabledLabel.hidden = false;
-    xlsxFileInput.disabled = true;
-
-    fmFilenameTag.hidden = false;
-    fmFilenameTag.textContent = `📄 ${fmExcelFile.name}`;
-  });
-
-  useFmChangeLink.addEventListener("click", (e) => {
-    e.preventDefault();
-    useFmExcelBtn.textContent = "Use front matter Excel";
-    useFmExcelBtn.classList.remove("active");
-    useFmChangeLink.hidden = true;
-
-    xlsxDropzone.classList.remove("fm-disabled");
-    fmDisabledLabel.hidden = true;
-    xlsxFileInput.disabled = false;
-
-    fmFilenameTag.hidden = true;
-    fmFilenameTag.textContent = "";
-  });
-
-  function parsePageListRows(rows) {
     const dataRows = rows.slice(2).filter((r) => r && r.length && r[1] !== undefined && r[1] !== "");
 
     const entries = [];
+    const rawRows = [];
     let inBody = false;
     let prevStart = 0;
+    let lastEndPage = 0;
 
-    dataRows.forEach((row) => {
+    dataRows.forEach((row, idx) => {
       const fileNameRaw = String(row[1]).trim();
       const startPage = Number(row[2]);
       const endPage = Number(row[3]);
+      const flag = Number(row[4]) === 1 ? 1 : 0;
+      const pagelist = Number(row[5]) === 1 ? 1 : 0;
+      const number = Number(row[0]);
       if (!fileNameRaw || Number.isNaN(startPage) || Number.isNaN(endPage)) return;
 
       if (!inBody) {
@@ -347,17 +339,28 @@ ${spineItems}</spine>
         }
       }
       prevStart = startPage;
+      lastEndPage = endPage;
 
-      const filename = fileNameRaw.replace(/\.xhtml$/i, "") + ".xhtml";
+      const label = fileNameRaw.replace(/\.xhtml$/i, "");
+      const filename = label + ".xhtml";
 
-      for (let p = startPage; p <= endPage; p++) {
-        const label = inBody ? String(p) : toRoman(p);
-        entries.push({ filename, label });
+      rawRows.push({ number: Number.isNaN(number) ? idx + 1 : number, label, filename, startPage, endPage, flag, pagelist });
+
+      if (pagelist !== 1) {
+        for (let p = startPage; p <= endPage; p++) {
+          const pageLabel = inBody ? String(p) : toRoman(p);
+          entries.push({ filename, label: pageLabel });
+        }
       }
     });
 
     navPageEntries = entries;
-    pageCountPreview.value = String(navPageEntries.length);
+    excelRows = rawRows;
+    totalPageCountInput.value = String(lastEndPage);
+    maxPageNumberInput.value = String(lastEndPage);
+    pageCountPreview.textContent = String(navPageEntries.length);
+    tocCountPreview.textContent = String(rawRows.filter((r) => r.flag === 0).length);
+    sectionsCountPreview.textContent = String(rawRows.filter((r) => r.flag === 1).length);
   }
 
   function buildNavXhtml() {
@@ -370,17 +373,32 @@ ${spineItems}</spine>
       return null;
     }
 
+    const sortedRows = [...excelRows].sort((a, b) => a.number - b.number);
+
     let tocItems = "";
-    navTocEntries.forEach((entry) => {
-      tocItems += `<li><a href="${escapeXml(entry.src)}">${escapeXmlPreserveEntities(entry.label)}</a></li>\n`;
+    let openParent = false;
+    sortedRows.forEach((row) => {
+      const href = XHTML_PREFIX + row.filename;
+      if (row.flag === 1) {
+        if (openParent) tocItems += "</ol></li>\n";
+        const matched = h2Entries.find((e) => e.filename === row.filename);
+        const label = matched ? matched.label : row.label;
+        tocItems += `<li><a href="${escapeXml(href)}">${escapeXmlPreserveEntities(label)}</a>\n<ol>\n`;
+        openParent = true;
+      } else {
+        const matched = extractedEntries.find((e) => e.filename === row.filename);
+        const label = matched ? matched.label : row.label;
+        tocItems += `<li><a href="${escapeXml(href)}">${escapeXmlPreserveEntities(label)}</a></li>\n`;
+      }
     });
+    if (openParent) tocItems += "</ol></li>\n";
 
     let pageItems = "";
     navPageEntries.forEach((entry) => {
       pageItems += `<li><a href="${XHTML_PREFIX}${escapeXml(entry.filename)}#pagebreak_${entry.label}">${entry.label}</a></li>\n`;
     });
 
-    const title = navDocTitle || "Untitled";
+    const title = docTitle || "Untitled";
 
     return `<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html>
@@ -421,219 +439,50 @@ ${pageItems}</ol>
       .replace(/>/g, "&gt;");
   }
 
-  function renderFrontMatter() {
-    frontMatterList.innerHTML = "";
-    frontMatter.forEach((entry, idx) => {
-      const li = document.createElement("li");
-      li.className = "entry-item fm-row";
-      li.draggable = true;
-      li.dataset.idx = String(idx);
-
-      li.addEventListener("dragstart", () => {
-        li.classList.add("dragging");
-      });
-      li.addEventListener("dragend", () => {
-        li.classList.remove("dragging");
-        frontMatterList.querySelectorAll(".fm-row.drag-over").forEach((row) => row.classList.remove("drag-over"));
-      });
-      li.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        li.classList.add("drag-over");
-      });
-      li.addEventListener("dragleave", () => {
-        li.classList.remove("drag-over");
-      });
-      li.addEventListener("drop", (e) => {
-        e.preventDefault();
-        li.classList.remove("drag-over");
-        const draggingRow = frontMatterList.querySelector(".fm-row.dragging");
-        if (!draggingRow) return;
-        const fromIdx = Number(draggingRow.dataset.idx);
-        const toIdx = Number(li.dataset.idx);
-        if (fromIdx === toIdx) return;
-        const [moved] = frontMatter.splice(fromIdx, 1);
-        frontMatter.splice(toIdx, 0, moved);
-        renderFrontMatter();
-      });
-
-      const number = document.createElement("span");
-      number.className = "fm-number";
-      number.textContent = `${idx + 1}`;
-      li.appendChild(number);
-
-      const handle = document.createElement("span");
-      handle.className = "handle";
-      handle.textContent = "☰";
-      li.appendChild(handle);
-
-      const fields = document.createElement("div");
-      fields.className = "entry-fields";
-
-      const labelInput = document.createElement("input");
-      labelInput.type = "text";
-      labelInput.value = entry.label;
-      labelInput.addEventListener("input", () => {
-        entry.label = labelInput.value;
-      });
-
-      const filenameInput = document.createElement("input");
-      filenameInput.type = "text";
-      filenameInput.value = entry.filename;
-      filenameInput.addEventListener("input", () => {
-        entry.filename = filenameInput.value;
-        pathPreview.textContent = XHTML_PREFIX + entry.filename;
-      });
-
-      const pathPreview = document.createElement("div");
-      pathPreview.className = "path-preview";
-      pathPreview.textContent = XHTML_PREFIX + entry.filename;
-
-      fields.appendChild(labelInput);
-      fields.appendChild(filenameInput);
-      fields.appendChild(pathPreview);
-      li.appendChild(fields);
-
-      const delBtn = document.createElement("button");
-      delBtn.className = "icon-btn danger";
-      delBtn.title = "Delete";
-      delBtn.textContent = "✕";
-      delBtn.addEventListener("click", () => {
-        frontMatter.splice(idx, 1);
-        renderFrontMatter();
-      });
-
-      li.appendChild(delBtn);
-
-      frontMatterList.appendChild(li);
-    });
-  }
-
-  function labelToFilename(label) {
-    return label.trim().replace(/\s+/g, "_") + ".xhtml";
-  }
-
-  function addFrontMatterEntry() {
-    const label = newLabelInput.value.trim();
-    if (!label) {
-      showStatus("Enter a label to add an entry.", "error");
-      return;
-    }
-    frontMatter.push({ label, filename: labelToFilename(label) });
-    newLabelInput.value = "";
-    renderFrontMatter();
-  }
-
-  const fmImportBtn = document.getElementById("fmImportBtn");
-  const fmExcelInput = document.getElementById("fmExcelInput");
-
-  fmImportBtn.addEventListener("click", () => {
-    fmExcelInput.click();
-  });
-
-  fmExcelInput.addEventListener("change", () => {
-    const file = fmExcelInput.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const data = new Uint8Array(reader.result);
-        const workbook = XLSX.read(data, { type: "array" });
-        const sheet = workbook.Sheets["PageData"];
-        if (!sheet) {
-          showStatus('Sheet "PageData" not found in workbook.', "error");
-          return;
-        }
-        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-        const dataRows = rows.slice(2);
-        const names = [];
-        dataRows.forEach((row) => {
-          if (!row || row[1] === undefined || row[1] === "") return;
-          const name = String(row[1]).trim();
-          if (!name) return;
-          names.push(name);
-        });
-
-        function getPrefix(name) {
-          const parts = name.split("_");
-          if (parts.length < 3) return null;
-          return parts.slice(0, -1).join("_") + "_";
-        }
-
-        const prefixCount = {};
-        names.forEach((name) => {
-          const prefix = getPrefix(name);
-          if (prefix === null) return;
-          prefixCount[prefix] = (prefixCount[prefix] || 0) + 1;
-        });
-
-        const filteredNames = names.filter((name) => {
-          const prefix = getPrefix(name);
-          if (prefix === null) return true;
-          return prefixCount[prefix] < 5;
-        });
-
-        const newEntries = filteredNames.map((name) => ({ label: name, filename: name + ".xhtml" }));
-        frontMatter.length = 0;
-        newEntries.forEach((entry) => frontMatter.push(entry));
-        renderFrontMatter();
-        fmExcelFile = file;
-        useFmExcelBtn.style.display = "";
-        showStatus(`Imported ${newEntries.length} front matter entries from ${file.name}.`, "success");
-      } catch (err) {
-        showStatus("Failed to parse Excel file: " + err.message, "error");
-      }
-    };
-    reader.onerror = () => showStatus("Failed to read Excel file.", "error");
-    reader.readAsArrayBuffer(file);
-    fmExcelInput.value = "";
-  });
-
-  addEntryBtn.addEventListener("click", addFrontMatterEntry);
-  newLabelInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      addFrontMatterEntry();
-    }
-  });
-
   function renderClasses() {
-    classList.innerHTML = "";
-    extractClasses.forEach((cls, idx) => {
-      const li = document.createElement("li");
+    if (!classBadgesWrap) return;
+    classBadgesWrap.innerHTML = "";
+    const orderedClasses = ["toc1", ...detectedClasses.filter((c) => c !== "toc1")];
+    orderedClasses.forEach((cls) => {
       const isLocked = cls === "toc1";
-      li.className = "class-chip" + (isLocked ? " locked" : "");
-      const span = document.createElement("span");
-      span.textContent = cls;
-      li.appendChild(span);
+      const isSelected = extractClasses.includes(cls);
+      const badge = document.createElement("span");
+      badge.className = "class-badge" + (isSelected ? " selected" : "") + (isLocked ? " locked" : "");
+      badge.dataset.class = cls;
+      badge.textContent = cls + (isLocked ? " 🔒" : "");
       if (!isLocked) {
-        const delBtn = document.createElement("button");
-        delBtn.className = "icon-btn danger";
-        delBtn.title = "Remove";
-        delBtn.textContent = "✕";
-        delBtn.addEventListener("click", () => {
-          extractClasses.splice(idx, 1);
+        badge.addEventListener("click", () => {
+          const i = extractClasses.indexOf(cls);
+          if (i === -1) {
+            extractClasses.push(cls);
+          } else {
+            extractClasses.splice(i, 1);
+          }
           renderClasses();
+          recomputeExtracted();
         });
-        li.appendChild(delBtn);
       }
-      classList.appendChild(li);
+      classBadgesWrap.appendChild(badge);
     });
+    if (classCount) {
+      classCount.textContent = `${extractClasses.length} class${extractClasses.length === 1 ? "" : "es"} selected`;
+    }
   }
 
-  addClassBtn.addEventListener("click", () => {
-    const cls = newClassInput.value.trim();
-    if (!cls) {
-      showStatus("Enter a class name to add.", "error");
-      return;
-    }
-    if (extractClasses.includes(cls)) {
-      showStatus(`Class "${cls}" already in list.`, "error");
-      return;
-    }
-    extractClasses.push(cls);
-    newClassInput.value = "";
-    renderClasses();
-  });
+  if (addClassBtn) {
+    addClassBtn.addEventListener("click", () => {
+      const cls = newClassInput.value.trim();
+      if (!cls) {
+        showStatus("Enter a class name to add.", "error");
+        return;
+      }
+      if (!detectedClasses.includes(cls)) detectedClasses.push(cls);
+      if (!extractClasses.includes(cls)) extractClasses.push(cls);
+      newClassInput.value = "";
+      renderClasses();
+      recomputeExtracted();
+    });
+  }
 
   function renderExtracted() {
     extractedList.innerHTML = "";
@@ -674,18 +523,15 @@ ${pageItems}</ol>
     reader.readAsText(file);
   });
 
-  function parseContentsFile(text) {
-    const titleMatch = text.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
-    docTitle = titleMatch ? titleMatch[1].replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim() : "";
-    docTitleText.textContent = docTitle || "(none found)";
-    docTitlePreview.hidden = false;
+  const blockRe = /<(p|h[1-6])\b([^>]*)>([\s\S]*?)<\/\1>/gi;
+  const anchorRe = /<a\b[^>]*\bhref\s*=\s*["']([^"']+\.xhtml[^"']*)["'][^>]*>([\s\S]*?)<\/a>/i;
 
+  function recomputeExtracted() {
     const entries = [];
-    const blockRe = /<(p|h[1-6])\b([^>]*)>([\s\S]*?)<\/\1>/gi;
-    const anchorRe = /<a\b[^>]*\bhref\s*=\s*["']([^"']+\.xhtml[^"']*)["'][^>]*>([\s\S]*?)<\/a>/i;
+    blockRe.lastIndex = 0;
     let blockMatch;
 
-    while ((blockMatch = blockRe.exec(text)) !== null) {
+    while ((blockMatch = blockRe.exec(rawContentsText)) !== null) {
       const attrs = blockMatch[2];
       const classMatch = attrs.match(/\bclass\s*=\s*["']([^"']*)["']/i);
       if (!classMatch) continue;
@@ -706,6 +552,59 @@ ${pageItems}</ol>
 
     extractedEntries = entries;
     renderExtracted();
+
+    const contentsConfirm = document.getElementById("contentsConfirm");
+    const confirmContentsEntries = document.getElementById("confirmContentsEntries");
+    if (contentsConfirm && confirmContentsEntries) {
+      contentsConfirm.hidden = false;
+      confirmContentsEntries.textContent = String(extractedEntries.length);
+    }
+    if (contentsViewBtn) contentsViewBtn.hidden = false;
+  }
+
+  function parseContentsFile(text) {
+    rawContentsText = text;
+    if (viewContentsBtn) viewContentsBtn.hidden = !rawContentsText;
+
+    const titleMatch = text.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+    docTitle = titleMatch ? titleMatch[1].replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim() : "";
+    docTitleText.textContent = docTitle || "(none found)";
+    docTitlePreview.hidden = false;
+
+    const confirmTitle = document.getElementById("confirmTitle");
+    if (confirmTitle) confirmTitle.textContent = docTitle || "—";
+
+    const classSet = new Set();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, "application/xhtml+xml");
+    const hasParserError = doc.querySelector("parsererror");
+    const scanDoc = hasParserError ? parser.parseFromString(text, "text/html") : doc;
+    scanDoc.querySelectorAll("p, h1, h2, h3, h4, h5, h6").forEach((el) => {
+      String(el.className || "").split(/\s+/).forEach((cls) => {
+        if (cls) classSet.add(cls);
+      });
+    });
+    classSet.delete("toc1");
+    detectedClasses = ["toc1", ...classSet];
+    extractClasses = extractClasses.filter((c) => c === "toc1" || detectedClasses.includes(c));
+    if (!extractClasses.includes("toc1")) extractClasses.unshift("toc1");
+    renderClasses();
+
+    recomputeExtracted();
+
+    const h2List = [];
+    const h2Re = /<h2\b[^>]*>([\s\S]*?)<\/h2>/gi;
+    let h2Match;
+    while ((h2Match = h2Re.exec(text)) !== null) {
+      const anchorMatch = anchorRe.exec(h2Match[1]);
+      if (!anchorMatch) continue;
+      const href = anchorMatch[1].trim();
+      const label = anchorMatch[2].replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+      if (label && href) {
+        h2List.push({ label, filename: href });
+      }
+    }
+    h2Entries = h2List;
   }
 
   function showStatus(msg, type) {
@@ -718,10 +617,10 @@ ${pageItems}</ol>
     const totalPageCount = totalPageCountInput.value.trim();
     const maxPageNumber = maxPageNumberInput.value.trim();
 
-    const allEntries = [...frontMatter, ...extractedEntries];
+    const allEntries = getNcxEntries();
 
     if (allEntries.length === 0) {
-      showStatus("No entries to generate. Add front matter or upload Contents.xhtml.", "error");
+      showStatus("No entries to generate. Upload the Excel file before continuing.", "error");
       return null;
     }
 
@@ -762,10 +661,39 @@ ${navPoints}</navMap>
     ncxData = ncx;
     parseNcxData(ncxData);
     ncxPreview.textContent = ncxData;
-    tocCountPreview.value = String(navTocEntries.length);
+    tocCountPreview.textContent = String(navTocEntries.length);
     ncxNextBtn.disabled = false;
     showNcxStatus("toc.ncx ready ✅", "success");
   });
+
+  const generateNavBtn = document.getElementById("generateNavBtn");
+  const navStatusMsgEl = document.getElementById("navStatusMsg");
+  const navPreviewEl = document.getElementById("navPreview");
+  const navNextBtn = document.getElementById("navNextBtn");
+
+  function showNavStatus(msg, type) {
+    if (!navStatusMsgEl) return;
+    navStatusMsgEl.textContent = msg;
+    navStatusMsgEl.className = "status-msg" + (type ? " " + type : "");
+  }
+
+  if (generateNavBtn) {
+    generateNavBtn.addEventListener("click", () => {
+      if (!ncxData) {
+        showNavStatus("Generate toc.ncx before continuing.", "error");
+        return;
+      }
+      const navXhtml = buildNavXhtml();
+      if (!navXhtml) {
+        showNavStatus("Failed to generate nav.xhtml.", "error");
+        return;
+      }
+      lastNavXhtml = navXhtml;
+      if (navPreviewEl) navPreviewEl.textContent = navXhtml;
+      if (navNextBtn) navNextBtn.disabled = false;
+      showNavStatus("nav.xhtml ready ✅", "success");
+    });
+  }
 
   function downloadBlob(content, filename, mime) {
     const blob = new Blob([content], { type: mime || "text/plain" });
@@ -789,7 +717,7 @@ ${navPoints}</navMap>
       ncxData = ncx;
       parseNcxData(ncxData);
       ncxPreview.textContent = ncxData;
-      tocCountPreview.value = String(navTocEntries.length);
+      tocCountPreview.textContent = String(navTocEntries.length);
       downloadBlob(ncxData, "toc.ncx", "application/x-dtbncx+xml");
       showStatus("toc.ncx generated and downloaded.", "success");
       revealSuccessPanel(["toc.ncx"]);
@@ -884,9 +812,9 @@ ${navPoints}</navMap>
   })();
 
   const MODE_TAB_ORDERS = {
-    1: ["meta", "frontmatter", "classes", "contents", "generate"],
-    2: ["meta", "frontmatter", "classes", "contents", "generatencx", "nav", "generate"],
-    3: ["meta", "frontmatter", "classes", "contents", "generatencx", "nav", "package", "generate"]
+    1: ["excel", "contents", "classes", "generate"],
+    2: ["excel", "contents", "classes", "generatencx", "nav", "generate"],
+    3: ["excel", "contents", "classes", "generatencx", "nav", "package", "generate"]
   };
   let selectedMode = 3;
   let tabOrder = MODE_TAB_ORDERS[selectedMode];
@@ -913,9 +841,13 @@ ${navPoints}</navMap>
 
     ncxNextBtn.dataset.next = (mode === 1) ? "generate" : "nav";
 
-    const contentsNextBtn = document.querySelector("#tab-contents .next-btn");
-    if (contentsNextBtn) {
-      contentsNextBtn.dataset.next = (mode === 1) ? "generate" : "generatencx";
+    const classesNextBtn = document.querySelector("#tab-classes .next-btn");
+    if (classesNextBtn) {
+      classesNextBtn.dataset.next = (mode === 1) ? "generate" : "generatencx";
+    }
+
+    if (navNextBtn) {
+      navNextBtn.dataset.next = (mode === 3) ? "package" : "generate";
     }
 
     const navRow = document.querySelector('[data-file="nav.xhtml"]');
@@ -924,7 +856,7 @@ ${navPoints}</navMap>
     if (pkgRow) pkgRow.hidden = mode < 3;
 
     updateTabLocks();
-    switchTab("meta");
+    switchTab("excel");
     refreshChrome();
     updateSidebarSummary();
   }
@@ -936,6 +868,9 @@ ${navPoints}</navMap>
     ncxPreview.textContent = "";
     ncxNextBtn.disabled = true;
     showNcxStatus("", "");
+    if (navPreviewEl) navPreviewEl.textContent = "";
+    if (navNextBtn) navNextBtn.disabled = true;
+    showNavStatus("", "");
     showStatus("", "");
     const successPanel = document.getElementById("successPanel");
     if (successPanel) successPanel.hidden = true;
@@ -1024,15 +959,9 @@ ${navPoints}</navMap>
   }
 
   function validateStep(tabName) {
-    if (tabName === "meta") {
-      if (!isbnInput.value.trim() || !totalPageCountInput.value.trim() || !maxPageNumberInput.value.trim()) {
-        showStatus("Fill in ISBN, Total Page Count, and Max Page Number before continuing.", "error");
-        return false;
-      }
-    }
-    if (tabName === "frontmatter") {
-      if (frontMatter.length === 0) {
-        showStatus("Add at least one front matter entry before continuing.", "error");
+    if (tabName === "excel") {
+      if (excelRows.length === 0 || !isbnInput.value.trim()) {
+        showStatus("Upload and parse the Excel file before continuing.", "error");
         return false;
       }
     }
@@ -1055,8 +984,8 @@ ${navPoints}</navMap>
       }
     }
     if (tabName === "nav") {
-      if (navPageEntries.length === 0) {
-        showStatus("Upload the page list Excel file before continuing.", "error");
+      if (!lastNavXhtml) {
+        showNavStatus("Generate NAV before continuing.", "error");
         return false;
       }
     }
@@ -1103,7 +1032,6 @@ ${navPoints}</navMap>
   });
 
   updateTabLocks();
-  renderFrontMatter();
   renderClasses();
   renderContributors();
 
@@ -1224,6 +1152,82 @@ ${navPoints}</navMap>
     }
   }
 
+
+  /* ---------- File view modal (Excel / Contents preview) ---------- */
+  const fileViewModal = document.getElementById("fileViewModal");
+  const fvTitle = document.getElementById("fvTitle");
+  const fvBody = document.getElementById("fvBody");
+  const fvClose = document.getElementById("fvClose");
+
+  function openFileViewModal(title, tableHtml) {
+    if (!fileViewModal) return;
+    fvTitle.textContent = title;
+    fvBody.innerHTML = tableHtml;
+    fileViewModal.classList.add("open");
+  }
+
+  function closeFileViewModal() {
+    if (!fileViewModal) return;
+    fileViewModal.classList.remove("open");
+  }
+
+  function openExcelView() {
+    const rows = [...excelRows].sort((a, b) => a.number - b.number);
+    let rowsHtml = "";
+    rows.forEach((row) => {
+      const rowClass = row.flag === 1 ? ' class="flag-row"' : "";
+      const pagesBadge = row.pagelist === 1 ? '<span class="fv-badge-nopages">no pages</span>' : "";
+      rowsHtml += `<tr${rowClass}>
+        <td>${escapeXml(row.number)}</td>
+        <td title="${escapeXml(row.label)}">${escapeXml(row.label)}</td>
+        <td>${escapeXml(row.startPage)}</td>
+        <td>${escapeXml(row.endPage)}</td>
+        <td>${escapeXml(row.flag)}</td>
+        <td>${escapeXml(row.pagelist)}${pagesBadge}</td>
+      </tr>\n`;
+    });
+    const tableHtml = `<table class="fv-table">
+      <thead><tr><th>#</th><th>File Name</th><th>Start Page</th><th>End Page</th><th>Flag</th><th>Pagelist</th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>`;
+    openFileViewModal("Excel Preview", tableHtml);
+  }
+
+  function openContentsView() {
+    let rowsHtml = "";
+    extractedEntries.forEach((entry, idx) => {
+      rowsHtml += `<tr>
+        <td>${idx + 1}</td>
+        <td title="${escapeXml(entry.label)}">${escapeXml(entry.label)}</td>
+        <td title="${escapeXml(entry.filename)}">${escapeXml(entry.filename)}</td>
+      </tr>\n`;
+    });
+    const tableHtml = `<table class="fv-table">
+      <thead><tr><th>#</th><th>Label</th><th>Href</th></tr></thead>
+      <tbody>${rowsHtml}</tbody>
+    </table>`;
+    openFileViewModal("Contents.xhtml Preview", tableHtml);
+  }
+
+  function openContentsRawView() {
+    const tableHtml = `<div class="fv-code-wrap"><pre><code id="fvCodeContent">${escapeXml(rawContentsText)}</code></pre></div>`;
+    openFileViewModal("Contents.xhtml", tableHtml);
+  }
+
+  if (excelViewBtn) excelViewBtn.addEventListener("click", openExcelView);
+  if (contentsViewBtn) contentsViewBtn.addEventListener("click", openContentsView);
+  if (viewContentsBtn) viewContentsBtn.addEventListener("click", openContentsRawView);
+  if (fvClose) fvClose.addEventListener("click", closeFileViewModal);
+  if (fileViewModal) {
+    fileViewModal.addEventListener("click", (e) => {
+      if (e.target === fileViewModal) closeFileViewModal();
+    });
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && fileViewModal && fileViewModal.classList.contains("open")) {
+      closeFileViewModal();
+    }
+  });
 
   /* ---------- Code preview modal (presentation-only) ---------- */
   const codeModal = document.getElementById("codeModal");
@@ -1377,7 +1381,7 @@ ${navPoints}</navMap>
 
     const tocCount = navTocEntries.length > 0
       ? navTocEntries.length
-      : frontMatter.length + extractedEntries.length;
+      : excelRows.length + extractedEntries.length;
     setStat(qsToc, tocCount, "TOC entry", "TOC entries");
     setStat(qsPages, navPageEntries.length, "page", "pages");
     setStat(qsImages, imageFiles.length, "image", "images");
