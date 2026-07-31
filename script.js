@@ -312,6 +312,30 @@ ${spineItems}</spine>
     loadMasterExcel(file);
   });
 
+  function downloadExcelTemplate() {
+    const wb = XLSX.utils.book_new();
+    const wsData = [
+      ["ISBN", "9780000000000"],
+      ["#", "File Name", "Start Page", "End Page", "flag", "pagelist"],
+      [1, "Cover", 1, 1, 0, 0],
+      [2, "Title", 2, 2, 0, 0],
+      [3, "Copyright", 3, 3, 0, 0],
+      [4, "Contents", 4, 5, 0, 0],
+      [5, "filename_0001", 1, 10, 0, 0],
+      [6, "Part_one", 11, 11, 1, 1],
+      [7, "filename_0002", 12, 25, 0, 0],
+      [8, "filename_0003", 26, 40, 0, 0]
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    XLSX.utils.book_append_sheet(wb, ws, "PageData");
+    XLSX.writeFile(wb, "EPUB_PageList_Template.xlsx");
+  }
+
+  const downloadTemplateBtn = document.getElementById("downloadTemplateBtn");
+  if (downloadTemplateBtn) {
+    downloadTemplateBtn.addEventListener("click", downloadExcelTemplate);
+  }
+
   function parseMasterExcelRows(rows) {
     const isbn = rows[0] && rows[0][1] !== undefined ? String(rows[0][1]).trim() : "";
     isbnInput.value = isbn;
