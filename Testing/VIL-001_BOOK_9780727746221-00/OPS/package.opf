@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:File="java:java.io.File" xmlns:file="http://expath.org/ns/file" version="3.0" xml:lang="en" unique-identifier="p9780727719041">
+<metadata>
+<dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/" id="p9780727719041">urn:isbn: p9780727719041</dc:identifier>
+<dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/" id="creator1">M. G. Barrett</dc:creator>
+<meta refines="#creator1" property="role" scheme="marc:relators">aut</meta>
+<meta refines="#creator1" property="display-seq">1</meta>
+<dc:title xmlns:dc="http://purl.org/dc/elements/1.1/" id="main_1">Coastal zone planning and management</dc:title>
+<meta refines="#main_1" property="title-type">main</meta>
+<meta refines="#main_1" property="display-seq">1</meta>
+<meta refines="#main_1" property="group-position">1</meta>
+<dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">urn:isbn: p9780727719041</dc:source>
+<dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">Thomas Telford</dc:publisher>
+<dc:language xmlns:dc="http://purl.org/dc/elements/1.1/">en</dc:language>
+<dc:type xmlns:dc="http://purl.org/dc/elements/1.1/">Text</dc:type>
+<dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">327 pages</dc:format>
+<dc:date xmlns:dc="http://purl.org/dc/elements/1.1/">2026-06-13T20:15:19</dc:date>
+<meta property="dcterms:modified">2026-06-13T20:15:22Z</meta>
+<meta name="cover" content="cover-image"/>
+</metadata>
+
+
+
+<manifest>
+<item id="toc" properties="nav" href="nav.xhtml" media-type="application/xhtml+xml"/>
+<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+<item id="css" href="styles/stylesheet.css" media-type="text/css"/>
+
+<item id="cover-image" href="images/9780727719041.jpg" media-type="image/jpeg"/>
+
+<item id="Cover" href="xhtml/Cover.xhtml" media-type="application/xhtml+xml"/>
+<item id="Title" href="xhtml/Title.xhtml" media-type="application/xhtml+xml"/>
+<item id="Copyright" href="xhtml/Copyright.xhtml" media-type="application/xhtml+xml"/>
+<item id="Contents" href="xhtml/Contents.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0001" href="xhtml/czpam_19041_0001.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0002" href="xhtml/czpam_19041_0002.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0003" href="xhtml/czpam_19041_0003.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0004" href="xhtml/czpam_19041_0004.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0005" href="xhtml/czpam_19041_0005.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0006" href="xhtml/czpam_19041_0006.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0007" href="xhtml/czpam_19041_0007.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0008" href="xhtml/czpam_19041_0008.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0009" href="xhtml/czpam_19041_0009.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0010" href="xhtml/czpam_19041_0010.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0011" href="xhtml/czpam_19041_0011.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0012" href="xhtml/czpam_19041_0012.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0013" href="xhtml/czpam_19041_0013.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0014" href="xhtml/czpam_19041_0014.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0015" href="xhtml/czpam_19041_0015.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0016" href="xhtml/czpam_19041_0016.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0017" href="xhtml/czpam_19041_0017.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0018" href="xhtml/czpam_19041_0018.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0019" href="xhtml/czpam_19041_0019.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0020" href="xhtml/czpam_19041_0020.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0021" href="xhtml/czpam_19041_0021.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0022" href="xhtml/czpam_19041_0022.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0023" href="xhtml/czpam_19041_0023.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0024" href="xhtml/czpam_19041_0024.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0025" href="xhtml/czpam_19041_0025.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0026" href="xhtml/czpam_19041_0026.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0027" href="xhtml/czpam_19041_0027.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0028" href="xhtml/czpam_19041_0028.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0029" href="xhtml/czpam_19041_0029.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0030" href="xhtml/czpam_19041_0030.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0031" href="xhtml/czpam_19041_0031.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0032" href="xhtml/czpam_19041_0032.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0033" href="xhtml/czpam_19041_0033.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0034" href="xhtml/czpam_19041_0034.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0035" href="xhtml/czpam_19041_0035.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0036" href="xhtml/czpam_19041_0036.xhtml" media-type="application/xhtml+xml"/>
+<item id="czpam_19041_0037" href="xhtml/czpam_19041_0037.xhtml" media-type="application/xhtml+xml"/>
+
+
+
+
+
+<item id="czpam_19041_000207_001" href="images/czpam_19041_000207_001.png" media-type="image/png"/>
+<item id="czpam_19041_000210_002" href="images/czpam_19041_000210_002.png" media-type="image/png"/>
+<item id="czpam_19041_000302_003" href="images/czpam_19041_000302_003.png" media-type="image/png"/>
+<item id="czpam_19041_000304_004" href="images/czpam_19041_000304_004.png" media-type="image/png"/>
+<item id="czpam_19041_000305_005" href="images/czpam_19041_000305_005.png" media-type="image/png"/>
+<item id="czpam_19041_000306_006" href="images/czpam_19041_000306_006.png" media-type="image/png"/>
+<item id="czpam_19041_000306_007" href="images/czpam_19041_000306_007.png" media-type="image/png"/>
+<item id="czpam_19041_000307_008" href="images/czpam_19041_000307_008.png" media-type="image/png"/>
+<item id="czpam_19041_000308_009" href="images/czpam_19041_000308_009.png" media-type="image/png"/>
+<item id="czpam_19041_000605_010" href="images/czpam_19041_000605_010.png" media-type="image/png"/>
+<item id="czpam_19041_000606_011" href="images/czpam_19041_000606_011.png" media-type="image/png"/>
+<item id="czpam_19041_000607_012" href="images/czpam_19041_000607_012.png" media-type="image/png"/>
+<item id="czpam_19041_000608_013" href="images/czpam_19041_000608_013.png" media-type="image/png"/>
+<item id="czpam_19041_000612_014" href="images/czpam_19041_000612_014.png" media-type="image/png"/>
+<item id="czpam_19041_001504_015" href="images/czpam_19041_001504_015.png" media-type="image/png"/>
+<item id="czpam_19041_001505_016" href="images/czpam_19041_001505_016.png" media-type="image/png"/>
+<item id="czpam_19041_001511_017" href="images/czpam_19041_001511_017.png" media-type="image/png"/>
+<item id="czpam_19041_002204_018" href="images/czpam_19041_002204_018.png" media-type="image/png"/>
+<item id="czpam_19041_002208_019" href="images/czpam_19041_002208_019.png" media-type="image/png"/>
+<item id="czpam_19041_002303_020" href="images/czpam_19041_002303_020.png" media-type="image/png"/>
+<item id="czpam_19041_002304_021" href="images/czpam_19041_002304_021.png" media-type="image/png"/>
+<item id="czpam_19041_002306_022" href="images/czpam_19041_002306_022.png" media-type="image/png"/>
+<item id="czpam_19041_002310_023" href="images/czpam_19041_002310_023.png" media-type="image/png"/>
+<item id="czpam_19041_002313_024" href="images/czpam_19041_002313_024.png" media-type="image/png"/>
+<item id="czpam_19041_00242_025" href="images/czpam_19041_00242_025.png" media-type="image/png"/>
+<item id="czpam_19041_00246_026" href="images/czpam_19041_00246_026.png" media-type="image/png"/>
+<item id="czpam_19041_00247_027" href="images/czpam_19041_00247_027.png" media-type="image/png"/>
+<item id="czpam_19041_002804_028" href="images/czpam_19041_002804_028.png" media-type="image/png"/>
+<item id="czpam_19041_002806_029" href="images/czpam_19041_002806_029.png" media-type="image/png"/>
+<item id="czpam_19041_002810_tab002" href="images/czpam_19041_002810_tab002.png" media-type="image/png"/>
+<item id="czpam_19041_003003_030" href="images/czpam_19041_003003_030.png" media-type="image/png"/>
+<item id="czpam_19041_003006_052" href="images/czpam_19041_003006_052.png" media-type="image/png"/>
+<item id="czpam_19041_003007_031" href="images/czpam_19041_003007_031.png" media-type="image/png"/>
+<item id="czpam_19041_003009_32" href="images/czpam_19041_003009_32.png" media-type="image/png"/>
+<item id="czpam_19041_003102_033" href="images/czpam_19041_003102_033.png" media-type="image/png"/>
+<item id="czpam_19041_003105_034" href="images/czpam_19041_003105_034.png" media-type="image/png"/>
+<item id="czpam_19041_003109_035" href="images/czpam_19041_003109_035.png" media-type="image/png"/>
+<item id="czpam_19041_00322_036" href="images/czpam_19041_00322_036.png" media-type="image/png"/>
+<item id="czpam_19041_00323_037" href="images/czpam_19041_00323_037.png" media-type="image/png"/>
+<item id="czpam_19041_003402_038" href="images/czpam_19041_003402_038.png" media-type="image/png"/>
+<item id="czpam_19041_003405_039" href="images/czpam_19041_003405_039.png" media-type="image/png"/>
+<item id="czpam_19041_003407_040" href="images/czpam_19041_003407_040.png" media-type="image/png"/>
+<item id="czpam_19041_003408_041" href="images/czpam_19041_003408_041.png" media-type="image/png"/>
+<item id="czpam_19041_003409_042" href="images/czpam_19041_003409_042.png" media-type="image/png"/>
+<item id="czpam_19041_003410_043" href="images/czpam_19041_003410_043.png" media-type="image/png"/>
+<item id="czpam_19041_003412_044" href="images/czpam_19041_003412_044.png" media-type="image/png"/>
+<item id="czpam_19041_003413_045" href="images/czpam_19041_003413_045.png" media-type="image/png"/>
+<item id="czpam_19041_003414_046" href="images/czpam_19041_003414_046.png" media-type="image/png"/>
+<item id="czpam_19041_003415_047" href="images/czpam_19041_003415_047.png" media-type="image/png"/>
+<item id="czpam_19041_003416_048" href="images/czpam_19041_003416_048.png" media-type="image/png"/>
+<item id="czpam_19041_003503_049" href="images/czpam_19041_003503_049.png" media-type="image/png"/>
+<item id="czpam_19041_003506_050" href="images/czpam_19041_003506_050.png" media-type="image/png"/>
+<item id="czpam_19041_003507_051" href="images/czpam_19041_003507_051.png" media-type="image/png"/>
+<item id="title_logo" href="images/title_logo.png" media-type="image/png"/>
+
+
+</manifest>
+
+
+
+<spine page-progression-direction="ltr" toc="ncx">
+
+<itemref idref="Cover" linear="yes"/>
+<itemref idref="Title" linear="yes"/>
+<itemref idref="Copyright" linear="yes"/>
+<itemref idref="Contents" linear="yes"/>
+<itemref idref="czpam_19041_0001" linear="yes"/>
+<itemref idref="czpam_19041_0002" linear="yes"/>
+<itemref idref="czpam_19041_0003" linear="yes"/>
+<itemref idref="czpam_19041_0004" linear="yes"/>
+<itemref idref="czpam_19041_0005" linear="yes"/>
+<itemref idref="czpam_19041_0006" linear="yes"/>
+<itemref idref="czpam_19041_0007" linear="yes"/>
+<itemref idref="czpam_19041_0008" linear="yes"/>
+<itemref idref="czpam_19041_0009" linear="yes"/>
+<itemref idref="czpam_19041_0010" linear="yes"/>
+<itemref idref="czpam_19041_0011" linear="yes"/>
+<itemref idref="czpam_19041_0012" linear="yes"/>
+<itemref idref="czpam_19041_0013" linear="yes"/>
+<itemref idref="czpam_19041_0014" linear="yes"/>
+<itemref idref="czpam_19041_0015" linear="yes"/>
+<itemref idref="czpam_19041_0016" linear="yes"/>
+<itemref idref="czpam_19041_0017" linear="yes"/>
+<itemref idref="czpam_19041_0018" linear="yes"/>
+<itemref idref="czpam_19041_0019" linear="yes"/>
+<itemref idref="czpam_19041_0020" linear="yes"/>
+<itemref idref="czpam_19041_0021" linear="yes"/>
+<itemref idref="czpam_19041_0022" linear="yes"/>
+<itemref idref="czpam_19041_0023" linear="yes"/>
+<itemref idref="czpam_19041_0024" linear="yes"/>
+<itemref idref="czpam_19041_0025" linear="yes"/>
+<itemref idref="czpam_19041_0026" linear="yes"/>
+<itemref idref="czpam_19041_0027" linear="yes"/>
+<itemref idref="czpam_19041_0028" linear="yes"/>
+<itemref idref="czpam_19041_0029" linear="yes"/>
+<itemref idref="czpam_19041_0030" linear="yes"/>
+<itemref idref="czpam_19041_0031" linear="yes"/>
+<itemref idref="czpam_19041_0032" linear="yes"/>
+<itemref idref="czpam_19041_0033" linear="yes"/>
+<itemref idref="czpam_19041_0034" linear="yes"/>
+<itemref idref="czpam_19041_0035" linear="yes"/>
+<itemref idref="czpam_19041_0036" linear="yes"/>
+<itemref idref="czpam_19041_0037" linear="yes"/>
+</spine>
+
+<guide>
+<reference type="cover" title="Cover Image" href="xhtml/Cover.xhtml"/>
+<reference type="title" title="Title Page" href="xhtml/Title.xhtml"/>
+<reference type="toc" title="Contents" href="xhtml/Contents.xhtml"/>
+</guide>
+</package>

@@ -4,9 +4,10 @@
   const XHTML_PREFIX = "xhtml/";
 
   let extractedEntries = [];
+  let allExtractedEntries = [];
   let h2Entries = [];
   let docTitle = "";
-  let extractClasses = ["toc1"];
+  let extractClasses = [];
   let detectedClasses = ["toc1"];
   let rawContentsText = "";
 
@@ -466,9 +467,9 @@ ${pageItems}</ol>
   function renderClasses() {
     if (!classBadgesWrap) return;
     classBadgesWrap.innerHTML = "";
-    const orderedClasses = ["toc1", ...detectedClasses.filter((c) => c !== "toc1")];
+    const orderedClasses = detectedClasses;
     orderedClasses.forEach((cls) => {
-      const isLocked = cls === "toc1";
+      const isLocked = cls === detectedClasses[0];
       const isSelected = extractClasses.includes(cls);
       const badge = document.createElement("span");
       badge.className = "class-badge" + (isSelected ? " selected" : "") + (isLocked ? " locked" : "");
@@ -538,7 +539,7 @@ ${pageItems}</ol>
     reader.onload = () => {
       try {
         parseContentsFile(reader.result);
-        showStatus(`Extracted ${extractedEntries.length} entries from ${file.name}.`, "success");
+        showStatus(`Extracted ${allExtractedEntries.length} entries from ${file.name}.`, "success");
       } catch (err) {
         showStatus("Failed to parse file: " + err.message, "error");
       }
@@ -551,28 +552,10 @@ ${pageItems}</ol>
   const anchorRe = /<a\b[^>]*\bhref\s*=\s*["']([^"']+\.xhtml[^"']*)["'][^>]*>([\s\S]*?)<\/a>/i;
 
   function recomputeExtracted() {
-    const entries = [];
-    blockRe.lastIndex = 0;
-    let blockMatch;
-
-    while ((blockMatch = blockRe.exec(rawContentsText)) !== null) {
-      const attrs = blockMatch[2];
-      const classMatch = attrs.match(/\bclass\s*=\s*["']([^"']*)["']/i);
-      if (!classMatch) continue;
-      const tagClasses = classMatch[1].split(/\s+/);
-      const hasTargetClass = extractClasses.some((cls) => tagClasses.includes(cls));
-      if (!hasTargetClass) continue;
-
-      const inner = blockMatch[3];
-      const anchorMatch = anchorRe.exec(inner);
-      if (!anchorMatch) continue;
-
-      const href = anchorMatch[1].trim();
-      const label = anchorMatch[2].replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
-      if (label && href) {
-        entries.push({ label, filename: href });
-      }
-    }
+    const entries = allExtractedEntries.filter((entry) => {
+      const tagClasses = entry.className ? entry.className.split(/\s+/) : [];
+      return extractClasses.some((cls) => tagClasses.includes(cls));
+    });
 
     extractedEntries = entries;
     renderExtracted();
@@ -584,6 +567,13 @@ ${pageItems}</ol>
       confirmContentsEntries.textContent = String(extractedEntries.length);
     }
     if (contentsViewBtn) contentsViewBtn.hidden = false;
+  }
+
+  function getInnerText(el) {
+    return el.innerHTML
+      .replace(/<[^>]+>/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   function parseContentsFile(text) {
@@ -608,11 +598,50 @@ ${pageItems}</ol>
         if (cls) classSet.add(cls);
       });
     });
-    classSet.delete("toc1");
-    detectedClasses = ["toc1", ...classSet];
-    extractClasses = extractClasses.filter((c) => c === "toc1" || detectedClasses.includes(c));
-    if (!extractClasses.includes("toc1")) extractClasses.unshift("toc1");
+    // Auto-detect primary class (most used on <p> tags)
+    const classCount = {};
+    scanDoc.querySelectorAll("p[class]").forEach((p) => {
+      String(p.className || "").trim().split(/\s+/).forEach((c) => {
+        if (c) classCount[c] = (classCount[c] || 0) + 1;
+      });
+    });
+    const primaryClass = Object.entries(classCount)
+      .sort((a, b) => b[1] - a[1])[0]?.[0] || "toc1";
+
+    classSet.delete(primaryClass);
+    detectedClasses = [primaryClass, ...classSet];
+    extractClasses = [primaryClass];
     renderClasses();
+
+    allExtractedEntries = [];
+
+    // Use regex on raw text to preserve entities like &#x2013;
+    const tagRe = /<(p|h[1-6])\b([^>]*)>([\s\S]*?)<\/\1>/gi;
+    let tagMatch;
+    while ((tagMatch = tagRe.exec(text)) !== null) {
+      const attrs = tagMatch[2];
+      const inner = tagMatch[3];
+
+      // Extract class from tag attributes
+      const classMatch = attrs.match(/class=["']([^"']*)["']/);
+      const className = classMatch ? classMatch[1].trim() : "";
+
+      // Extract href and label from inner <a href="*.xhtml">
+      const anchorRe2 = /<a\b[^>]*href=["']([^"']*\.xhtml[^"']*)["'][^>]*>([\s\S]*?)<\/a>/i;
+      const aMatch = anchorRe2.exec(inner);
+      if (!aMatch) continue;
+
+      const href = aMatch[1].replace(/^xhtml\//, "").trim();
+      // Use full <p> inner content, not just <a> inner content
+      const label = inner
+        .replace(/<[^>]+>/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      if (href && label) {
+        allExtractedEntries.push({ filename: href, label, className });
+      }
+    }
 
     recomputeExtracted();
 

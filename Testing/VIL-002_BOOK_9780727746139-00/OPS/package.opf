@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:File="java:java.io.File" xmlns:file="http://expath.org/ns/file" version="3.0" xml:lang="en" unique-identifier="p9780727719041">
+<metadata>
+<dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/" id="p9780727720988">urn:isbn: 9780727720988</dc:identifier>
+<dc:title xmlns:dc="http://purl.org/dc/elements/1.1/" id="main_1">Civil engineering insurance and bonding 2nd edition</dc:title>
+<meta refines="#main_1" property="title-type">main</meta>
+<meta refines="#main_1" property="display-seq">1</meta>
+<meta refines="#main_1" property="group-position">1</meta>
+<dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">urn:isbn: 9780727720988</dc:source>
+<dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">Thomas Telford Publishing Limited</dc:publisher>
+<dc:language xmlns:dc="http://purl.org/dc/elements/1.1/">en</dc:language>
+<dc:type xmlns:dc="http://purl.org/dc/elements/1.1/">Text</dc:type>
+<dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">158 pages</dc:format>
+<dc:date xmlns:dc="http://purl.org/dc/elements/1.1/">2026-07-19T20:15:19</dc:date>
+<meta property="dcterms:modified">2026-07-19T20:15:22Z</meta>
+<meta name="cover" content="cover-image"/>
+</metadata>
+
+<manifest>
+<item id="toc" properties="nav" href="nav.xhtml" media-type="application/xhtml+xml"/>
+<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+<item id="css" href="styles/stylesheet.css" media-type="text/css"/>
+
+<item properties="cover-image" id="cover-image" href="images/9780727720988.jpg" media-type="image/jpeg"/>
+
+<item id="Cover" href="xhtml/Cover.xhtml" media-type="application/xhtml+xml"/>
+<item id="Front_matter" href="xhtml/Front_matter.xhtml" media-type="application/xhtml+xml"/>
+<item id="Title" href="xhtml/Title.xhtml" media-type="application/xhtml+xml"/>
+<item id="Copyright" href="xhtml/Copyright.xhtml" media-type="application/xhtml+xml"/>
+<item id="Preface_to_the_First_Edition" href="xhtml/Preface_to_the_First_Edition.xhtml" media-type="application/xhtml+xml"/>
+<item id="Preface_to_the_Second_Edition" href="xhtml/Preface_to_the_Second_Edition.xhtml" media-type="application/xhtml+xml"/>
+<item id="Abbreviations" href="xhtml/Abbreviations.xhtml" media-type="application/xhtml+xml"/>
+<item id="Contents" href="xhtml/Contents.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0001" href="xhtml/ceiab2e_20986_0001.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0002" href="xhtml/ceiab2e_20986_0002.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0003" href="xhtml/ceiab2e_20986_0003.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0004" href="xhtml/ceiab2e_20986_0004.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0005" href="xhtml/ceiab2e_20986_0005.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0006" href="xhtml/ceiab2e_20986_0006.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0007" href="xhtml/ceiab2e_20986_0007.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0008" href="xhtml/ceiab2e_20986_0008.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0009" href="xhtml/ceiab2e_20986_0009.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0010" href="xhtml/ceiab2e_20986_0010.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0011" href="xhtml/ceiab2e_20986_0011.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0012" href="xhtml/ceiab2e_20986_0012.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0013" href="xhtml/ceiab2e_20986_0013.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0014" href="xhtml/ceiab2e_20986_0014.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0015" href="xhtml/ceiab2e_20986_0015.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_0016" href="xhtml/ceiab2e_20986_0016.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_bm01" href="xhtml/ceiab2e_20986_bm01.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_bm02" href="xhtml/ceiab2e_20986_bm02.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_bm03" href="xhtml/ceiab2e_20986_bm03.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_bm04" href="xhtml/ceiab2e_20986_bm04.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_bm05" href="xhtml/ceiab2e_20986_bm05.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_bm06" href="xhtml/ceiab2e_20986_bm06.xhtml" media-type="application/xhtml+xml"/>
+<item id="ceiab2e_20986_bm07" href="xhtml/ceiab2e_20986_bm07.xhtml" media-type="application/xhtml+xml"/>
+
+<item id="ceiab2e_20986_0016-001" href="images/ceiab2e_20986_0016-001.png" media-type="image/png"/>
+<item id="ceiab2e_20986_bm01-001" href="images/ceiab2e_20986_bm01-001.png" media-type="image/png"/>
+<item id="ceiab2e_20986_bm02-001" href="images/ceiab2e_20986_bm02-001.png" media-type="image/png"/>
+<item id="title_logo" href="images/title_logo.png" media-type="image/png"/>
+</manifest>
+
+<spine page-progression-direction="ltr" toc="ncx">
+
+<itemref idref="Cover" linear="yes"/>
+<itemref idref="Front_matter" linear="yes"/>
+<itemref idref="Title" linear="yes"/>
+<itemref idref="Copyright" linear="yes"/>
+<itemref idref="Preface_to_the_First_Edition" linear="yes"/>
+<itemref idref="Preface_to_the_Second_Edition" linear="yes"/>
+<itemref idref="Abbreviations" linear="yes"/>
+<itemref idref="Contents" linear="yes"/>
+<itemref idref="ceiab2e_20986_0001" linear="yes"/>
+<itemref idref="ceiab2e_20986_0002" linear="yes"/>
+<itemref idref="ceiab2e_20986_0003" linear="yes"/>
+<itemref idref="ceiab2e_20986_0004" linear="yes"/>
+<itemref idref="ceiab2e_20986_0005" linear="yes"/>
+<itemref idref="ceiab2e_20986_0006" linear="yes"/>
+<itemref idref="ceiab2e_20986_0007" linear="yes"/>
+<itemref idref="ceiab2e_20986_0008" linear="yes"/>
+<itemref idref="ceiab2e_20986_0009" linear="yes"/>
+<itemref idref="ceiab2e_20986_0010" linear="yes"/>
+<itemref idref="ceiab2e_20986_0011" linear="yes"/>
+<itemref idref="ceiab2e_20986_0012" linear="yes"/>
+<itemref idref="ceiab2e_20986_0013" linear="yes"/>
+<itemref idref="ceiab2e_20986_0014" linear="yes"/>
+<itemref idref="ceiab2e_20986_0015" linear="yes"/>
+<itemref idref="ceiab2e_20986_0016" linear="yes"/>
+<itemref idref="ceiab2e_20986_bm01" linear="yes"/>
+<itemref idref="ceiab2e_20986_bm02" linear="yes"/>
+<itemref idref="ceiab2e_20986_bm03" linear="yes"/>
+<itemref idref="ceiab2e_20986_bm04" linear="yes"/>
+<itemref idref="ceiab2e_20986_bm05" linear="yes"/>
+<itemref idref="ceiab2e_20986_bm06" linear="yes"/>
+<itemref idref="ceiab2e_20986_bm07" linear="yes"/>
+</spine>
+<guide>
+<reference type="cover" title="Cover Image" href="xhtml/Cover.xhtml"/>
+<reference type="title" title="Title Page" href="xhtml/Title.xhtml"/>
+<reference type="toc" title="Contents" href="xhtml/Contents.xhtml"/>
+</guide>
+</package>

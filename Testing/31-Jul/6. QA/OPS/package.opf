@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:File="java:java.io.File" xmlns:file="http://expath.org/ns/file" version="3.0" xml:lang="en" unique-identifier="p9780727715029">
+<metadata>
+<dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/" id="p9780727715029">urn:isbn: p9780727715029</dc:identifier>
+<dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/" id="creator1">Institution of Civil Engineers</dc:creator>
+<meta refines="#creator1" property="role" scheme="marc:relators">aut</meta>
+<meta refines="#creator1" property="display-seq">1</meta>
+<dc:title xmlns:dc="http://purl.org/dc/elements/1.1/" id="main_1">Coastal Management</dc:title>
+<meta refines="#main_1" property="title-type">main</meta>
+<meta refines="#main_1" property="display-seq">1</meta>
+<meta refines="#main_1" property="group-position">1</meta>
+<dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">urn:isbn: p9780727715029</dc:source>
+<dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">Thomas Telford Ltd</dc:publisher>
+<dc:language xmlns:dc="http://purl.org/dc/elements/1.1/">en</dc:language>
+<dc:type xmlns:dc="http://purl.org/dc/elements/1.1/">Text</dc:type>
+<dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">307 pages</dc:format>
+<dc:date xmlns:dc="http://purl.org/dc/elements/1.1/">2026-07-30T19:39:00</dc:date>
+<meta property="dcterms:modified">2026-07-30T19:39:00Z</meta>
+<meta name="cover" content="cover-image"/>
+</metadata>
+
+<manifest>
+<item id="toc" properties="nav" href="nav.xhtml" media-type="application/xhtml+xml"/>
+<item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+<item id="css" href="styles/stylesheet.css" media-type="text/css"/>
+<item id="cover-image" href="images/9780727715029.jpg" media-type="image/jpeg"/>
+<item id="Cover" href="xhtml/Cover.xhtml" media-type="application/xhtml+xml"/>
+<item id="Title" href="xhtml/Title.xhtml" media-type="application/xhtml+xml"/>
+<item id="Copyright" href="xhtml/Copyright.xhtml" media-type="application/xhtml+xml"/>
+<item id="Contents" href="xhtml/Contents.xhtml" media-type="application/xhtml+xml"/>
+<item id="Part_one" href="xhtml/Part_one.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0001" href="xhtml/cm_15029_0001.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0002" href="xhtml/cm_15029_0002.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0003" href="xhtml/cm_15029_0003.xhtml" media-type="application/xhtml+xml"/>
+<item id="Part_two" href="xhtml/Part_two.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0004" href="xhtml/cm_15029_0004.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0005" href="xhtml/cm_15029_0005.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0006" href="xhtml/cm_15029_0006.xhtml" media-type="application/xhtml+xml"/>
+<item id="Part_three" href="xhtml/Part_three.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0007" href="xhtml/cm_15029_0007.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0008" href="xhtml/cm_15029_0008.xhtml" media-type="application/xhtml+xml"/>
+<item id="Part_four" href="xhtml/Part_four.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0009" href="xhtml/cm_15029_0009.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0010" href="xhtml/cm_15029_0010.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0011" href="xhtml/cm_15029_0011.xhtml" media-type="application/xhtml+xml"/>
+<item id="Part_five" href="xhtml/Part_five.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0012" href="xhtml/cm_15029_0012.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0013" href="xhtml/cm_15029_0013.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0014" href="xhtml/cm_15029_0014.xhtml" media-type="application/xhtml+xml"/>
+<item id="Part_six" href="xhtml/Part_six.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0015" href="xhtml/cm_15029_0015.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0016" href="xhtml/cm_15029_0016.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0017" href="xhtml/cm_15029_0017.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0018" href="xhtml/cm_15029_0018.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0019" href="xhtml/cm_15029_0019.xhtml" media-type="application/xhtml+xml"/>
+<item id="Part_seven" href="xhtml/Part_seven.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0020" href="xhtml/cm_15029_0020.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0021" href="xhtml/cm_15029_0021.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0022" href="xhtml/cm_15029_0022.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0023" href="xhtml/cm_15029_0023.xhtml" media-type="application/xhtml+xml"/>
+<item id="cm_15029_0004-001" href="images/cm_15029_0004-001.png" media-type="image/png"/>
+<item id="cm_15029_0004-002" href="images/cm_15029_0004-002.png" media-type="image/png"/>
+<item id="cm_15029_0004-003" href="images/cm_15029_0004-003.png" media-type="image/png"/>
+<item id="cm_15029_0007-001" href="images/cm_15029_0007-001.png" media-type="image/png"/>
+<item id="cm_15029_0007-002" href="images/cm_15029_0007-002.png" media-type="image/png"/>
+<item id="cm_15029_0007-003" href="images/cm_15029_0007-003.png" media-type="image/png"/>
+<item id="cm_15029_0007-004" href="images/cm_15029_0007-004.png" media-type="image/png"/>
+<item id="cm_15029_0008-001" href="images/cm_15029_0008-001.png" media-type="image/png"/>
+<item id="cm_15029_0008-002" href="images/cm_15029_0008-002.png" media-type="image/png"/>
+<item id="cm_15029_0008-003" href="images/cm_15029_0008-003.png" media-type="image/png"/>
+<item id="cm_15029_0008-004" href="images/cm_15029_0008-004.png" media-type="image/png"/>
+<item id="cm_15029_0008-005" href="images/cm_15029_0008-005.png" media-type="image/png"/>
+<item id="cm_15029_0008-006" href="images/cm_15029_0008-006.png" media-type="image/png"/>
+<item id="cm_15029_0008-007" href="images/cm_15029_0008-007.png" media-type="image/png"/>
+<item id="cm_15029_0008-008" href="images/cm_15029_0008-008.png" media-type="image/png"/>
+<item id="cm_15029_0009-001" href="images/cm_15029_0009-001.png" media-type="image/png"/>
+<item id="cm_15029_0009-002" href="images/cm_15029_0009-002.png" media-type="image/png"/>
+<item id="cm_15029_0009-003" href="images/cm_15029_0009-003.png" media-type="image/png"/>
+<item id="cm_15029_0009-004" href="images/cm_15029_0009-004.png" media-type="image/png"/>
+<item id="cm_15029_0009-005" href="images/cm_15029_0009-005.png" media-type="image/png"/>
+<item id="cm_15029_0009-006" href="images/cm_15029_0009-006.png" media-type="image/png"/>
+<item id="cm_15029_0011-001" href="images/cm_15029_0011-001.png" media-type="image/png"/>
+<item id="cm_15029_0011-002" href="images/cm_15029_0011-002.png" media-type="image/png"/>
+<item id="cm_15029_0012-001" href="images/cm_15029_0012-001.png" media-type="image/png"/>
+<item id="cm_15029_0012-002" href="images/cm_15029_0012-002.png" media-type="image/png"/>
+<item id="cm_15029_0012-003" href="images/cm_15029_0012-003.png" media-type="image/png"/>
+<item id="cm_15029_0012-004" href="images/cm_15029_0012-004.png" media-type="image/png"/>
+<item id="cm_15029_0012-005" href="images/cm_15029_0012-005.png" media-type="image/png"/>
+<item id="cm_15029_0012-006" href="images/cm_15029_0012-006.png" media-type="image/png"/>
+<item id="cm_15029_0012-007" href="images/cm_15029_0012-007.png" media-type="image/png"/>
+<item id="cm_15029_0012-008" href="images/cm_15029_0012-008.png" media-type="image/png"/>
+<item id="cm_15029_0013-001" href="images/cm_15029_0013-001.png" media-type="image/png"/>
+<item id="cm_15029_0013-002" href="images/cm_15029_0013-002.png" media-type="image/png"/>
+<item id="cm_15029_0017-001" href="images/cm_15029_0017-001.png" media-type="image/png"/>
+<item id="cm_15029_0017-002" href="images/cm_15029_0017-002.png" media-type="image/png"/>
+<item id="cm_15029_0017-003" href="images/cm_15029_0017-003.png" media-type="image/png"/>
+<item id="cm_15029_0017-004" href="images/cm_15029_0017-004.png" media-type="image/png"/>
+<item id="cm_15029_0017-005" href="images/cm_15029_0017-005.png" media-type="image/png"/>
+<item id="cm_15029_0018-001" href="images/cm_15029_0018-001.png" media-type="image/png"/>
+<item id="cm_15029_0018-002" href="images/cm_15029_0018-002.png" media-type="image/png"/>
+<item id="cm_15029_0019-001" href="images/cm_15029_0019-001.png" media-type="image/png"/>
+<item id="cm_15029_0020-001" href="images/cm_15029_0020-001.png" media-type="image/png"/>
+<item id="cm_15029_0020-002" href="images/cm_15029_0020-002.png" media-type="image/png"/>
+<item id="cm_15029_0020-003" href="images/cm_15029_0020-003.png" media-type="image/png"/>
+<item id="cm_15029_0020-004" href="images/cm_15029_0020-004.png" media-type="image/png"/>
+<item id="cm_15029_0020-005" href="images/cm_15029_0020-005.png" media-type="image/png"/>
+<item id="cm_15029_0020-006" href="images/cm_15029_0020-006.png" media-type="image/png"/>
+<item id="cm_15029_0020-007" href="images/cm_15029_0020-007.png" media-type="image/png"/>
+<item id="cm_15029_0020-008" href="images/cm_15029_0020-008.png" media-type="image/png"/>
+<item id="cm_15029_0020-009" href="images/cm_15029_0020-009.png" media-type="image/png"/>
+<item id="cm_15029_0020-010" href="images/cm_15029_0020-010.png" media-type="image/png"/>
+<item id="cm_15029_0021-001" href="images/cm_15029_0021-001.png" media-type="image/png"/>
+<item id="cm_15029_0021-002" href="images/cm_15029_0021-002.png" media-type="image/png"/>
+<item id="cm_15029_0022-001" href="images/cm_15029_0022-001.png" media-type="image/png"/>
+<item id="cm_15029_0022-002" href="images/cm_15029_0022-002.png" media-type="image/png"/>
+<item id="cm_15029_0023-001" href="images/cm_15029_0023-001.png" media-type="image/png"/>
+<item id="cm_15029_0023-002" href="images/cm_15029_0023-002.png" media-type="image/png"/>
+<item id="cm_15029_0023-003" href="images/cm_15029_0023-003.png" media-type="image/png"/>
+<item id="cm_15029_0023-004" href="images/cm_15029_0023-004.png" media-type="image/png"/>
+<item id="cm_15029_0023-005" href="images/cm_15029_0023-005.png" media-type="image/png"/>
+<item id="cm_15029_0023-006" href="images/cm_15029_0023-006.png" media-type="image/png"/>
+<item id="cm_15029_0023-007" href="images/cm_15029_0023-007.png" media-type="image/png"/>
+<item id="cm_15029_0023-008" href="images/cm_15029_0023-008.png" media-type="image/png"/>
+<item id="Title" href="images/title_logo.png" media-type="image/png"/>
+<item id="Cover" href="images/9780727715029.jpg" media-type="image/jpg"/>
+</manifest>
+
+<spine page-progression-direction="ltr" toc="ncx">
+<itemref idref="Cover" linear="yes"/>
+<itemref idref="Title" linear="yes"/>
+<itemref idref="Copyright" linear="yes"/>
+<itemref idref="Contents" linear="yes"/>
+<itemref idref="Part_one" linear="yes"/>
+<itemref idref="cm_15029_0001" linear="yes"/>
+<itemref idref="cm_15029_0002" linear="yes"/>
+<itemref idref="cm_15029_0003" linear="yes"/>
+<itemref idref="Part_two" linear="yes"/>
+<itemref idref="cm_15029_0004" linear="yes"/>
+<itemref idref="cm_15029_0005" linear="yes"/>
+<itemref idref="cm_15029_0006" linear="yes"/>
+<itemref idref="Part_three" linear="yes"/>
+<itemref idref="cm_15029_0007" linear="yes"/>
+<itemref idref="cm_15029_0008" linear="yes"/>
+<itemref idref="Part_four" linear="yes"/>
+<itemref idref="cm_15029_0009" linear="yes"/>
+<itemref idref="cm_15029_0010" linear="yes"/>
+<itemref idref="cm_15029_0011" linear="yes"/>
+<itemref idref="Part_five" linear="yes"/>
+<itemref idref="cm_15029_0012" linear="yes"/>
+<itemref idref="cm_15029_0013" linear="yes"/>
+<itemref idref="cm_15029_0014" linear="yes"/>
+<itemref idref="Part_six" linear="yes"/>
+<itemref idref="cm_15029_0015" linear="yes"/>
+<itemref idref="cm_15029_0016" linear="yes"/>
+<itemref idref="cm_15029_0017" linear="yes"/>
+<itemref idref="cm_15029_0018" linear="yes"/>
+<itemref idref="cm_15029_0019" linear="yes"/>
+<itemref idref="Part_seven" linear="yes"/>
+<itemref idref="cm_15029_0020" linear="yes"/>
+<itemref idref="cm_15029_0021" linear="yes"/>
+<itemref idref="cm_15029_0022" linear="yes"/>
+<itemref idref="cm_15029_0023" linear="yes"/>
+</spine>
+
+<guide>
+<reference type="cover" title="Cover Image" href="xhtml/Cover.xhtml"/>
+<reference type="title" title="Title Page" href="xhtml/Title.xhtml"/>
+<reference type="toc" title="Contents" href="xhtml/Contents.xhtml"/>
+</guide>
+</package>
