@@ -652,7 +652,7 @@ while ((tagMatch = tagRe.exec(text)) !== null) {
     const aMatch = anchorRe2.exec(inner);
     if (!aMatch) continue;
 
-    const href = aMatch[1].replace(/^xhtml\//, "").trim();
+    const href = aMatch[1].replace(/^xhtml\//, "").replace(/#.*$/, "").trim();
     // Use full <p> inner content, not just <a> inner content
     const label = inner
         .replace(/<[^>]+>/g, "")
@@ -1088,14 +1088,16 @@ ${navPoints}</navMap>
     });
   });
 
-  nextBtns.forEach((btn) => {
+nextBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
       const currentPanel = btn.closest(".tab-panel");
       const currentTab = currentPanel.id.replace("tab-", "");
+      console.log("currentTab:", currentTab, "unlockedIndex:", unlockedIndex, "rawContentsText:", !!rawContentsText, "validateStep:", validateStep(currentTab));
       if (!validateStep(currentTab)) return;
       const currentIdx = tabOrder.indexOf(currentTab);
       const fallback = tabOrder.indexOf(btn.dataset.next);
       const nextIdx = tabOrder.includes(btn.dataset.next) ? fallback : currentIdx + 1;
+      console.log("currentIdx:", currentIdx, "nextIdx:", nextIdx, "tabOrder:", tabOrder);
       if (nextIdx < 0 || nextIdx >= tabOrder.length) return;
       const nextTab = tabOrder[nextIdx];
       if (nextIdx > unlockedIndex) unlockedIndex = nextIdx;
