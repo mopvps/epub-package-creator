@@ -1046,8 +1046,8 @@ ${navPoints}</navMap>
       }
     }
     if (tabName === "contents") {
-      if (extractedEntries.length === 0) {
-        showStatus("Upload Contents.xhtml and extract entries before continuing.", "error");
+      if (!rawContentsText) {
+        showStatus("Upload a Contents.xhtml file before continuing.", "error");
         return false;
       }
     }
