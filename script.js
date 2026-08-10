@@ -599,49 +599,70 @@ ${pageItems}</ol>
       });
     });
     // Auto-detect primary class (most used on <p> tags)
-    const classCount = {};
-    scanDoc.querySelectorAll("p[class]").forEach((p) => {
-      String(p.className || "").trim().split(/\s+/).forEach((c) => {
-        if (c) classCount[c] = (classCount[c] || 0) + 1;
-      });
-    });
-    const primaryClass = Object.entries(classCount)
-      .sort((a, b) => b[1] - a[1])[0]?.[0] || "toc1";
+// Smart detection: Find toc classes with the most links
+const classWithLinks = {};
+const allTocClasses = new Set();
 
-    classSet.delete(primaryClass);
-    detectedClasses = [primaryClass, ...classSet];
-    extractClasses = [primaryClass];
-    renderClasses();
+scanDoc.querySelectorAll("p[class]").forEach((p) => {
+    const classes = String(p.className || "").trim().split(/\s+/);
+    const tocClasses = classes.filter(c => c.includes('toc'));
+    
+    if (tocClasses.length === 0) return;
+    
+    tocClasses.forEach(c => allTocClasses.add(c));
+    
+    // Check if this paragraph has a link to .xhtml
+    const hasLink = p.querySelector('a[href$=".xhtml"]');
+    if (hasLink) {
+        tocClasses.forEach(c => {
+            classWithLinks[c] = (classWithLinks[c] || 0) + 1;
+        });
+    }
+});
 
-    allExtractedEntries = [];
+// Pick the toc class with the most links as primary
+const primaryClass = Object.entries(classWithLinks)
+    .sort((a, b) => b[1] - a[1])[0]?.[0] || 'toc1a';
 
-    // Use regex on raw text to preserve entities like &#x2013;
-    const tagRe = /<(p|h[1-6])\b([^>]*)>([\s\S]*?)<\/\1>/gi;
-    let tagMatch;
-    while ((tagMatch = tagRe.exec(text)) !== null) {
-      const attrs = tagMatch[2];
-      const inner = tagMatch[3];
+// Use ALL toc classes, with primary first
+detectedClasses = [primaryClass, ...[...allTocClasses].filter(c => c !== primaryClass)];
+extractClasses = [primaryClass];
+renderClasses();
 
-      // Extract class from tag attributes
-      const classMatch = attrs.match(/class=["']([^"']*)["']/);
-      const className = classMatch ? classMatch[1].trim() : "";
+allExtractedEntries = [];
 
-      // Extract href and label from inner <a href="*.xhtml">
-      const anchorRe2 = /<a\b[^>]*href=["']([^"']*\.xhtml[^"']*)["'][^>]*>([\s\S]*?)<\/a>/i;
-      const aMatch = anchorRe2.exec(inner);
-      if (!aMatch) continue;
+// Use regex on raw text to preserve entities like &#x2013;
+const tagRe = /<(p|h[1-6])\b([^>]*)>([\s\S]*?)<\/\1>/gi;
+let tagMatch;
+while ((tagMatch = tagRe.exec(text)) !== null) {
+    const attrs = tagMatch[2];
+    const inner = tagMatch[3];
 
-      const href = aMatch[1].replace(/^xhtml\//, "").trim();
-      // Use full <p> inner content, not just <a> inner content
-      const label = inner
+    // Extract class from tag attributes
+    const classMatch = attrs.match(/class=["']([^"']*)["']/);
+    const className = classMatch ? classMatch[1].trim() : "";
+    
+    // Skip if this element doesn't have a toc class
+    if (!className || !className.split(/\s+/).some(c => c.includes('toc'))) {
+        continue;
+    }
+
+    // Extract href and label from inner <a href="*.xhtml">
+    const anchorRe2 = /<a\b[^>]*href=["']([^"']*\.xhtml[^"']*)["'][^>]*>([\s\S]*?)<\/a>/i;
+    const aMatch = anchorRe2.exec(inner);
+    if (!aMatch) continue;
+
+    const href = aMatch[1].replace(/^xhtml\//, "").trim();
+    // Use full <p> inner content, not just <a> inner content
+    const label = inner
         .replace(/<[^>]+>/g, "")
         .replace(/\s+/g, " ")
         .trim();
 
-      if (href && label) {
+    if (href && label) {
         allExtractedEntries.push({ filename: href, label, className });
-      }
     }
+}
 
     recomputeExtracted();
 
