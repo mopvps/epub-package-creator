@@ -189,12 +189,12 @@
     return `<?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:File="java:java.io.File" xmlns:file="http://expath.org/ns/file" version="3.0" xml:lang="en" unique-identifier="p${escapeXml(isbn)}">
 <metadata>
-<dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/" id="p${escapeXml(isbn)}">urn:isbn: p${escapeXml(isbn)}</dc:identifier>
+<dc:identifier xmlns:dc="http://purl.org/dc/elements/1.1/" id="p${escapeXml(isbn)}">urn:isbn: ${escapeXml(isbn)}</dc:identifier>
 ${contributorBlocks}<dc:title xmlns:dc="http://purl.org/dc/elements/1.1/" id="main_1">${escapeXmlPreserveEntities(title)}</dc:title>
 <meta refines="#main_1" property="title-type">main</meta>
 <meta refines="#main_1" property="display-seq">1</meta>
 <meta refines="#main_1" property="group-position">1</meta>
-<dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">urn:isbn: p${escapeXml(isbn)}</dc:source>
+<dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">urn:isbn: ${escapeXml(isbn)}</dc:source>
 <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">${escapeXmlPreserveEntities(publisher)}</dc:publisher>
 <dc:language xmlns:dc="http://purl.org/dc/elements/1.1/">en</dc:language>
 <dc:type xmlns:dc="http://purl.org/dc/elements/1.1/">Text</dc:type>
