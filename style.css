@@ -1607,3 +1607,22 @@ select:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-r
     scroll-behavior: auto !important;
   }
 }
+
+.validation-error-box {
+  background: var(--error-bg, #fff0f0);
+  border: 1px solid var(--error-border, #f5c2c2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 12px;
+  color: var(--error-text, #c0392b);
+  font-size: 0.875rem;
+}
+
+.validation-error-box ul {
+  margin: 6px 0 0 0;
+  padding-left: 18px;
+}
+
+.validation-error-box li {
+  margin-bottom: 4px;
+}

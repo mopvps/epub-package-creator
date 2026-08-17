@@ -20,7 +20,6 @@ index.html      Full UI markup: startup screen + 7-step wizard, 2 modals
 style.css       All styling, theme variables, animations. No logic.
 script.js       All state, parsing, XML generation, wizard logic (single IIFE)
 projects.md     Pre-existing analysis notes (older/partially stale — describes an 8-step layout that no longer matches index.html)
-Testing/        Sample EPUB QA fixtures (unrelated test data, not part of app logic)
 ```
 
 Key `index.html` regions:

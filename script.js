@@ -283,6 +283,65 @@ ${spineItems}</spine>
       });
   }
 
+  function validateExcelData(rows) {
+    const errors = [];
+    const expectedHeaders = ["#", "File Name", "Start Page", "End Page", "flag", "pagelist", "numtype"];
+
+    const isbnValue = rows[0] && rows[0][1] !== undefined ? String(rows[0][1]).trim() : "";
+    if (!/^\d{13}$/.test(isbnValue)) {
+      errors.push(`ISBN must be 13 digits (found: '${isbnValue}')`);
+    }
+
+    const headerRow = rows[1] || [];
+    if (headerRow[6] === undefined || String(headerRow[6]).trim() === "") {
+      errors.push("Missing 'numtype' column — please download and use the latest template");
+    } else {
+      expectedHeaders.forEach((expected, i) => {
+        const actual = headerRow[i] !== undefined ? String(headerRow[i]).trim() : "";
+        if (actual.toLowerCase() !== expected.toLowerCase()) {
+          errors.push(`Column ${i + 1} header must be '${expected}' (found: '${actual}')`);
+        }
+      });
+    }
+
+    const dataRows = rows.slice(2).filter((r) => r && r.length && r[1] !== undefined && r[1] !== "");
+    dataRows.forEach((row, idx) => {
+      const rowNum = idx + 3;
+
+      const fileNameRaw = row[1] !== undefined ? String(row[1]).trim() : "";
+      if (!fileNameRaw) {
+        errors.push(`Row ${rowNum}: File Name is empty`);
+      }
+
+      const startPage = Number(row[2]);
+      if (row[2] === undefined || row[2] === "" || Number.isNaN(startPage)) {
+        errors.push(`Row ${rowNum}: Start Page must be a number (found: '${row[2]}')`);
+      }
+
+      const endPage = Number(row[3]);
+      if (row[3] === undefined || row[3] === "" || Number.isNaN(endPage) || endPage < startPage) {
+        errors.push(`Row ${rowNum}: End Page must be a number >= Start Page (found: '${row[3]}')`);
+      }
+
+      const flag = row[4];
+      if (!(Number(flag) === 0 || Number(flag) === 1)) {
+        errors.push(`Row ${rowNum}: flag must be 0 or 1 (found: '${flag}')`);
+      }
+
+      const pagelist = row[5];
+      if (!(Number(pagelist) === 0 || Number(pagelist) === 1)) {
+        errors.push(`Row ${rowNum}: pagelist must be 0 or 1 (found: '${pagelist}')`);
+      }
+
+      const numtype = row[6] !== undefined ? String(row[6]).trim().toLowerCase() : "";
+      if (numtype !== "roman" && numtype !== "number") {
+        errors.push(`Row ${rowNum}: numtype must be 'roman' or 'number' (found: '${row[6]}')`);
+      }
+    });
+
+    return errors.length ? { valid: false, errors } : { valid: true };
+  }
+
   function loadMasterExcel(file) {
     if (!file) return;
     xlsxFileName.textContent = file.name;
@@ -293,6 +352,21 @@ ${spineItems}</spine>
         const workbook = XLSX.read(data, { type: "array" });
         const sheet = workbook.Sheets[workbook.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        const excelValidationErrors = document.getElementById("excelValidationErrors");
+        const validation = validateExcelData(rows);
+        if (!validation.valid) {
+          if (excelValidationErrors) {
+            excelValidationErrors.innerHTML = `<strong>Excel validation failed:</strong><ul>${validation.errors
+              .map((e) => `<li>${escapeXml(e)}</li>`)
+              .join("")}</ul>`;
+            excelValidationErrors.hidden = false;
+          }
+          showStatus("Excel validation failed. Fix the errors and re-upload.", "error");
+          return;
+        }
+        if (excelValidationErrors) excelValidationErrors.hidden = true;
+
         parseMasterExcelRows(rows);
         excelConfirm.hidden = false;
         document.getElementById("confirmIsbn").textContent = isbnInput.value.trim() || "—";
@@ -317,15 +391,15 @@ ${spineItems}</spine>
     const wb = XLSX.utils.book_new();
     const wsData = [
       ["ISBN", "9780000000000"],
-      ["#", "File Name", "Start Page", "End Page", "flag", "pagelist"],
-      [1, "Cover", 1, 1, 0, 0],
-      [2, "Title", 2, 2, 0, 0],
-      [3, "Copyright", 3, 3, 0, 0],
-      [4, "Contents", 4, 5, 0, 0],
-      [5, "filename_0001", 1, 10, 0, 0],
-      [6, "Part_one", 11, 11, 1, 1],
-      [7, "filename_0002", 12, 25, 0, 0],
-      [8, "filename_0003", 26, 40, 0, 0]
+      ["#", "File Name", "Start Page", "End Page", "flag", "pagelist", "numtype"],
+      [1, "Cover", 1, 1, 0, 0, "roman"],
+      [2, "Title", 2, 2, 0, 0, "roman"],
+      [3, "Copyright", 3, 3, 0, 0, "roman"],
+      [4, "Contents", 4, 5, 0, 0, "roman"],
+      [5, "filename_0001", 6, 10, 0, 0, "number"],
+      [6, "Part_one", 11, 11, 1, 1, "number"],
+      [7, "filename_0002", 12, 25, 0, 0, "number"],
+      [8, "filename_0003", 26, 40, 0, 0, "number"]
     ];
     const ws = XLSX.utils.aoa_to_sheet(wsData);
     XLSX.utils.book_append_sheet(wb, ws, "PageData");
@@ -345,8 +419,6 @@ ${spineItems}</spine>
 
     const entries = [];
     const rawRows = [];
-    let inBody = false;
-    let prevStart = 0;
     let lastEndPage = 0;
 
     dataRows.forEach((row, idx) => {
@@ -356,24 +428,20 @@ ${spineItems}</spine>
       const flag = Number(row[4]) === 1 ? 1 : 0;
       const pagelist = Number(row[5]) === 1 ? 1 : 0;
       const number = Number(row[0]);
+      const numtype = row[6] ? String(row[6]).trim().toLowerCase() : "number";
+      const isRoman = numtype === "roman";
       if (!fileNameRaw || Number.isNaN(startPage) || Number.isNaN(endPage)) return;
 
-      if (!inBody) {
-        if (startPage < prevStart) {
-          inBody = true;
-        }
-      }
-      prevStart = startPage;
       lastEndPage = endPage;
 
       const label = fileNameRaw.replace(/\.xhtml$/i, "");
       const filename = label + ".xhtml";
 
-      rawRows.push({ number: Number.isNaN(number) ? idx + 1 : number, label, filename, startPage, endPage, flag, pagelist });
+      rawRows.push({ number: Number.isNaN(number) ? idx + 1 : number, label, filename, startPage, endPage, flag, pagelist, numtype });
 
       if (pagelist !== 1) {
         for (let p = startPage; p <= endPage; p++) {
-          const pageLabel = inBody ? String(p) : toRoman(p);
+          const pageLabel = isRoman ? toRoman(p) : String(p);
           entries.push({ filename, label: pageLabel });
         }
       }
@@ -1260,10 +1328,11 @@ nextBtns.forEach((btn) => {
         <td>${escapeXml(row.endPage)}</td>
         <td>${escapeXml(row.flag)}</td>
         <td>${escapeXml(row.pagelist)}${pagesBadge}</td>
+        <td>${escapeXml(row.numtype)}</td>
       </tr>\n`;
     });
     const tableHtml = `<table class="fv-table">
-      <thead><tr><th>#</th><th>File Name</th><th>Start Page</th><th>End Page</th><th>Flag</th><th>Pagelist</th></tr></thead>
+      <thead><tr><th>#</th><th>File Name</th><th>Start Page</th><th>End Page</th><th>Flag</th><th>Pagelist</th><th>Numtype</th></tr></thead>
       <tbody>${rowsHtml}</tbody>
     </table>`;
     openFileViewModal("Excel Preview", tableHtml);
