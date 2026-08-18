@@ -335,7 +335,7 @@
 
       <!-- 3 · CLASSES -->
       <div id="tab-classes" class="tab-panel" role="tabpanel"
-           data-title="Select classes to extract" data-desc="Classes detected from your Contents.xhtml. toc1 always included.">
+           data-title="Select classes to extract" data-desc="Classes detected from your Contents.xhtml.">
         <section class="card" style="--i:0">
           <div class="step-header-row">
             <h2>Select classes to extract</h2>
@@ -343,12 +343,13 @@
               <i class="ti ti-eye"></i> View Contents.xhtml
             </button>
           </div>
-          <p class="sub">Classes detected from your Contents.xhtml. <code>toc1</code> always included.</p>
-          <div id="classBadgesWrap" class="class-badges-wrap"></div>
-          <div id="classCount" class="class-count">1 class selected</div>
-          <div class="add-entry">
-            <input type="text" id="newClass" placeholder="Class name (e.g. toc3)" autocomplete="off">
-            <button id="addClassBtn" class="btn btn-secondary">+ Add Class</button>
+          <p class="sub">Classes detected from your Contents.xhtml.</p>
+          <div class="classes-section-label">Available Classes</div>
+          <div id="availClassesWrap" class="avail-classes-wrap"></div>
+
+          <div class="classes-section-label" style="margin-top:20px">Selected Classes</div>
+          <div id="selectedClassesWrap" class="selected-classes-wrap">
+            <p class="no-classes-msg">No classes selected</p>
           </div>
           <div class="step-nav">
             <button class="btn btn-primary next-btn" data-next="generatencx">Continue <span class="arrow">→</span></button>

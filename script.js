@@ -8,13 +8,14 @@
   let h2Entries = [];
   let docTitle = "";
   let extractClasses = [];
+  let classRoles = {};   // { "toc1": "main", "toc": "sub" }
+  let classEnabled = {}; // { "toc1": true, "toc": true }
+  let classEntryCounts = {};
   let detectedClasses = ["toc1"];
   let rawContentsText = "";
 
-  const classBadgesWrap = document.getElementById("classBadgesWrap");
-  const classCount = document.getElementById("classCount");
-  const newClassInput = document.getElementById("newClass");
-  const addClassBtn = document.getElementById("addClassBtn");
+  const availClassesWrap = document.getElementById("availClassesWrap");
+  const selectedClassesWrap = document.getElementById("selectedClassesWrap");
   const fileInput = document.getElementById("fileInput");
   const fileNameSpan = document.getElementById("fileName");
   const contentsViewBtn = document.getElementById("contentsViewBtn");
@@ -466,25 +467,41 @@ ${spineItems}</spine>
       return null;
     }
 
-    const sortedRows = [...excelRows].sort((a, b) => a.number - b.number);
+    function roleForEntry(entry) {
+      const tagClasses = entry.className ? entry.className.split(/\s+/) : [];
+      const matchedCls = extractClasses.find((cls) => tagClasses.includes(cls));
+      return classRoles[matchedCls] || "main";
+    }
 
     let tocItems = "";
-    let openParent = false;
-    sortedRows.forEach((row) => {
-      const href = XHTML_PREFIX + row.filename;
-      if (row.flag === 1) {
-        if (openParent) tocItems += "</ol></li>\n";
-        const matched = h2Entries.find((e) => e.filename === row.filename);
-        const label = matched ? matched.label : row.label;
-        tocItems += `<li><a href="${escapeXml(href)}">${escapeXmlPreserveEntities(label)}</a>\n<ol>\n`;
-        openParent = true;
+    let hasParent = false;
+    let subOpen = false;
+    extractedEntries.forEach((entry) => {
+      const href = XHTML_PREFIX + entry.filename;
+      const link = `<a href="${escapeXml(href)}">${escapeXmlPreserveEntities(entry.label)}</a>`;
+      const role = roleForEntry(entry);
+      if (role === "sub" && hasParent) {
+        if (!subOpen) {
+          tocItems += "<ul>\n";
+          subOpen = true;
+        }
+        tocItems += `<li>${link}</li>\n`;
       } else {
-        const matched = extractedEntries.find((e) => e.filename === row.filename);
-        const label = matched ? matched.label : row.label;
-        tocItems += `<li><a href="${escapeXml(href)}">${escapeXmlPreserveEntities(label)}</a></li>\n`;
+        if (hasParent) {
+          if (subOpen) {
+            tocItems += "</ul>\n";
+            subOpen = false;
+          }
+          tocItems += "</li>\n";
+        }
+        tocItems += `<li>${link}\n`;
+        hasParent = true;
       }
     });
-    if (openParent) tocItems += "</ol></li>\n";
+    if (hasParent) {
+      if (subOpen) tocItems += "</ul>\n";
+      tocItems += "</li>\n";
+    }
 
     let pageItems = "";
     navPageEntries.forEach((entry) => {
@@ -504,8 +521,8 @@ ${spineItems}</spine>
 <body>
 <nav epub:type="toc" id="toc">
 <h1 class="title">Table of Contents</h1>
-<ol>
-${tocItems}</ol>
+<ul>
+${tocItems}</ul>
 </nav>
 
 <nav epub:type="page-list">
@@ -533,49 +550,92 @@ ${pageItems}</ol>
   }
 
   function renderClasses() {
-    if (!classBadgesWrap) return;
-    classBadgesWrap.innerHTML = "";
-    const orderedClasses = detectedClasses;
-    orderedClasses.forEach((cls) => {
-      const isLocked = cls === detectedClasses[0];
-      const isSelected = extractClasses.includes(cls);
-      const badge = document.createElement("span");
-      badge.className = "class-badge" + (isSelected ? " selected" : "") + (isLocked ? " locked" : "");
-      badge.dataset.class = cls;
-      badge.textContent = cls + (isLocked ? " 🔒" : "");
-      if (!isLocked) {
-        badge.addEventListener("click", () => {
-          const i = extractClasses.indexOf(cls);
-          if (i === -1) {
-            extractClasses.push(cls);
-          } else {
-            extractClasses.splice(i, 1);
-          }
-          renderClasses();
-          recomputeExtracted();
-        });
-      }
-      classBadgesWrap.appendChild(badge);
-    });
-    if (classCount) {
-      classCount.textContent = `${extractClasses.length} class${extractClasses.length === 1 ? "" : "es"} selected`;
-    }
+    renderAvailClasses();
+    renderSelectedClasses();
   }
 
-  if (addClassBtn) {
-    addClassBtn.addEventListener("click", () => {
-      const cls = newClassInput.value.trim();
-      if (!cls) {
-        showStatus("Enter a class name to add.", "error");
-        return;
-      }
-      if (!detectedClasses.includes(cls)) detectedClasses.push(cls);
-      if (!extractClasses.includes(cls)) extractClasses.push(cls);
-      newClassInput.value = "";
-      renderClasses();
-      recomputeExtracted();
+  function renderAvailClasses() {
+    if (!availClassesWrap) return;
+    availClassesWrap.innerHTML = "";
+    detectedClasses.forEach((cls) => {
+      const isSelected = extractClasses.includes(cls);
+      const count = classEntryCounts[cls] || 0;
+
+      const card = document.createElement("div");
+      card.className = "avail-class-card" + (isSelected ? " selected" : "");
+      card.dataset.class = cls;
+
+      const name = document.createElement("span");
+      name.className = "acc-name";
+      name.textContent = cls;
+
+      const countSpan = document.createElement("span");
+      countSpan.className = "acc-count";
+      countSpan.textContent = `${count} entr${count === 1 ? "y" : "ies"}`;
+
+      card.appendChild(name);
+      card.appendChild(countSpan);
+
+      card.addEventListener("click", () => {
+        const i = extractClasses.indexOf(cls);
+        if (i === -1) {
+          extractClasses.push(cls);
+          classEnabled[cls] = true;
+          if (!classRoles[cls]) classRoles[cls] = extractClasses.length === 1 ? "main" : "sub";
+        } else {
+          extractClasses.splice(i, 1);
+        }
+        renderClasses();
+        recomputeExtracted();
+      });
+
+      availClassesWrap.appendChild(card);
     });
   }
+
+  function renderSelectedClasses() {
+    if (!selectedClassesWrap) return;
+    selectedClassesWrap.innerHTML = "";
+    if (extractClasses.length === 0) {
+      const msg = document.createElement("p");
+      msg.className = "no-classes-msg";
+      msg.textContent = "No classes selected";
+      selectedClassesWrap.appendChild(msg);
+      return;
+    }
+    extractClasses.forEach((cls, idx) => {
+      if (!classRoles[cls]) classRoles[cls] = idx === 0 ? "main" : "sub";
+      const role = classRoles[cls];
+
+      const row = document.createElement("div");
+      row.className = "selected-class-row";
+      row.dataset.class = cls;
+
+      const name = document.createElement("span");
+      name.className = "scr-name";
+      name.textContent = cls;
+
+      const select = document.createElement("select");
+      select.className = "role-select";
+      select.dataset.class = cls;
+      ["main", "sub"].forEach((r) => {
+        const option = document.createElement("option");
+        option.value = r;
+        option.textContent = r === "main" ? "Main" : "Sub";
+        if (role === r) option.selected = true;
+        select.appendChild(option);
+      });
+      select.addEventListener("change", () => {
+        classRoles[cls] = select.value;
+      });
+
+      row.appendChild(name);
+      row.appendChild(select);
+
+      selectedClassesWrap.appendChild(row);
+    });
+  }
+
 
   function renderExtracted() {
     extractedList.innerHTML = "";
@@ -666,36 +726,37 @@ ${pageItems}</ol>
         if (cls) classSet.add(cls);
       });
     });
-    // Auto-detect primary class (most used on <p> tags)
-// Smart detection: Find toc classes with the most links
-const classWithLinks = {};
-const allTocClasses = new Set();
+    // Auto-detect classes and entry counts (role is chosen manually by the user)
+    const allTocClasses = new Set();
+    const entryCountByClass = {};
 
-scanDoc.querySelectorAll("p[class]").forEach((p) => {
-    const classes = String(p.className || "").trim().split(/\s+/);
-    const tocClasses = classes.filter(c => c.includes('toc'));
-    
-    if (tocClasses.length === 0) return;
-    
-    tocClasses.forEach(c => allTocClasses.add(c));
-    
-    // Check if this paragraph has a link to .xhtml
-    const hasLink = p.querySelector('a[href$=".xhtml"]');
-    if (hasLink) {
-        tocClasses.forEach(c => {
-            classWithLinks[c] = (classWithLinks[c] || 0) + 1;
-        });
-    }
-});
+    scanDoc.querySelectorAll("p[class], h1[class], h2[class], h3[class], h4[class], h5[class], h6[class]").forEach((el) => {
+      const classes = String(el.className || "").trim().split(/\s+/);
+      const tocClasses = classes.filter(c => c.includes('toc'));
+      if (tocClasses.length === 0) return;
 
-// Pick the toc class with the most links as primary
-const primaryClass = Object.entries(classWithLinks)
-    .sort((a, b) => b[1] - a[1])[0]?.[0] || 'toc1a';
+      const link = el.querySelector('a[href*=".xhtml"]');
+      if (!link) return;
 
-// Use ALL toc classes, with primary first
-detectedClasses = [primaryClass, ...[...allTocClasses].filter(c => c !== primaryClass)];
-extractClasses = [primaryClass];
-renderClasses();
+      tocClasses.forEach(c => allTocClasses.add(c));
+      tocClasses.forEach(c => {
+        entryCountByClass[c] = (entryCountByClass[c] || 0) + 1;
+      });
+    });
+
+    detectedClasses = [...allTocClasses].sort((a, b) => (entryCountByClass[b] || 0) - (entryCountByClass[a] || 0));
+
+    classEntryCounts = entryCountByClass;
+    classRoles = {};
+    classEnabled = {};
+
+    // Auto-select all detected classes; first = main, rest = sub
+    extractClasses = [...detectedClasses];
+    extractClasses.forEach((cls, idx) => {
+      classRoles[cls] = idx === 0 ? "main" : "sub";
+      classEnabled[cls] = true;
+    });
+    renderClasses();
 
 allExtractedEntries = [];
 
